@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ein Bever-Film – Der Wohnwagen · norge-bever.blog (Vorschau)</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0f14">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="img/aussen.jpg">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body class="phase-intro">
+
+<!-- Titelkarte -->
+<section id="intro" aria-label="Vorspann">
+  <div class="bars"></div>
+  <div class="card c1"><small>norge-bever.blog präsentiert</small></div>
+  <div class="card c2"><h1>Ein Bever-Film</h1><p class="tag">„Norwegen ist kein Ziel – es ist ein Gefühl.“</p></div>
+  <div class="card c3"><ol class="chapters">
+    <li><b>Kapitel 1</b> Am Fjord</li><li><b>Kapitel 2</b> Die Tür</li><li><b>Kapitel 3</b> Drinnen</li></ol></div>
+  <button id="skip" class="ghost">Vorspann überspringen ›</button>
+</section>
+
+<!-- Außen -->
+<section id="aussen" aria-label="Vor dem Wohnwagen">
+  <div class="viewport" id="vpA">
+    <div class="stage" id="stageA">
+      <img class="bg" src="img/aussen.jpg" alt="Wohnwagen am Fjord in der Abenddämmerung" draggable="false">
+      <div class="glow"></div>
+      <img class="tuer" id="tuer" src="img/tuer.png" alt="" draggable="false">
+      <button class="hs door-hs" id="doorBtn" aria-label="Tür öffnen und eintreten"><span class="dot"></span><span class="lbl">Tür öffnen</span></button>
+    </div>
+  </div>
+  <div class="caption">
+    <p class="kicker">Kapitel 1 · Am Fjord</p>
+    <h2>Norwegen mit Wohnwagen</h2>
+    <p>echte Tipps von echten Reisenden</p>
+    <button class="cta" id="enter">Eintreten ›</button>
+  </div>
+</section>
+
+<!-- Innen -->
+<section id="innen" aria-label="Im Wohnwagen">
+  <div class="viewport scroller" id="vpI">
+    <div class="stage" id="stageI">
+      <img class="bg" src="img/innen.jpg" alt="Gemütlicher Wohnwagen von innen" draggable="false">
+      <div class="lamp"></div>
+      <!-- Hotspots: Prozent der Bildfläche -->
+      <button class="hs" data-st="fenster"  style="left:1%;top:4%;width:19%;height:52%"><span class="dot"></span><span class="lbl">Fenster · Reisebilder</span></button>
+      <button class="hs" data-st="tv"       style="left:20.8%;top:36%;width:13.2%;height:23%"><span class="dot"></span><span class="lbl">Fernseher · Video</span></button>
+      <button class="hs" data-st="rahmen"   style="left:38%;top:16%;width:28%;height:18.5%"><span class="dot"></span><span class="lbl">Bilderrahmen · Galerien</span></button>
+      <button class="hs" data-st="platte"   style="left:65%;top:30.5%;width:14.2%;height:20.5%"><span class="dot"></span><span class="lbl">Plattenspieler · Musik</span></button>
+      <button class="hs" data-st="radio"    style="left:79.3%;top:41%;width:7.6%;height:13.5%"><span class="dot"></span><span class="lbl">Radio · Live</span></button>
+      <button class="hs" data-st="schublade" style="left:65%;top:56%;width:15.5%;height:43%"><span class="dot"></span><span class="lbl">Schubladen</span></button>
+      <button class="hs" data-st="ordner"   style="left:88%;top:1%;width:12%;height:27%"><span class="dot"></span><span class="lbl">Ordner · Norwegen-Infos</span></button>
+      <button class="hs" data-st="karte"    style="left:89.5%;top:37%;width:10.5%;height:9.5%"><span class="dot"></span><span class="lbl">Karte · Route 2026</span></button>
+      <button class="hs" data-st="kompass"  style="left:90.5%;top:51%;width:8.5%;height:13%"><span class="dot"></span><span class="lbl">Kompass · Svingen-App</span></button>
+    </div>
+  </div>
+  <div class="hint" id="hint">← wischen zum Umsehen →</div>
+  <nav class="dock" aria-label="Stationen">
+    <button data-st="fenster">🪟<span>Fenster</span></button>
+    <button data-st="tv">📺<span>TV</span></button>
+    <button data-st="rahmen">🖼️<span>Galerien</span></button>
+    <button data-st="platte">🎵<span>Musik</span></button>
+    <button data-st="schublade">🗄️<span>Schubladen</span></button>
+    <button data-st="ordner">📁<span>Infos</span></button>
+    <button data-st="kompass">🧭<span>Svingen</span></button>
+  </nav>
+  <button id="out" class="ghost top-left" aria-label="Wieder nach draußen">‹ Nach draußen</button>
+</section>
+
+<!-- Overlay -->
+<div id="ov" role="dialog" aria-modal="true" aria-labelledby="ovTitle" hidden>
+  <div class="panel">
+    <header><button id="back" class="back">‹ Zurück in den Wohnwagen</button></header>
+    <h2 id="ovTitle"></h2>
+    <div id="ovBody"></div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="lb" hidden><button class="x" aria-label="Schließen">✕</button><button class="nav prev" aria-label="Zurück">‹</button><figure><img alt=""><figcaption></figcaption></figure><button class="nav next" aria-label="Weiter">›</button></div>
+
+<div class="fx vignette"></div><div class="fx grain"></div><div id="flash" class="fx"></div>
+<button id="sound" class="ghost top-right" aria-pressed="false" title="Umgebungsgeräusche">🔇 Ton aus</button>
+<audio id="musik" src="musik.mp3" preload="none" loop></audio>
+<p class="proto">Vorschau · Prototyp · Inhalte von norge-bever.blog</p>
+
+<script src="data.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
