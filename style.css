@@ -203,3 +203,5 @@ section{position:fixed;inset:0;opacity:0;visibility:hidden;transition:opacity 1.
 @media (max-width:560px){.wirprints{gap:12px}.wirprints button{width:calc(50% - 8px);padding:7px 7px 30px}.wirprints span{font-size:13px}}
 .wirprints button{padding-bottom:10px}.wirprints span{position:static;display:block;margin-top:8px;text-align:center}
 @media (max-width:560px){.wirprints button{padding-bottom:7px}}
+
+.hs.fr .dot{top:auto;bottom:-2px}.hs.fr .lbl{top:auto;bottom:-34px}
