@@ -128,8 +128,9 @@ schublade:{title:'Schubladen',render(el){
     if(d.classList.contains('open'))$$('iframe[data-src]',d).forEach(f=>{f.src=f.dataset.src;f.removeAttribute('data-src')})});
   $$('.prints button',el).forEach(b=>b.onclick=()=>{const p=prints[+b.dataset.i],g=G[p.gi];openLb(g.photos.map(s=>({src:s,cap:g.title})),p.pi)})}},
 ordner:{title:'Ordner: Norwegen-Infos auf einen Blick',render(el){
+  const tmp=document.createElement('div');
   const L=(u,t)=>`<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`;
-  el.append(h(`<p class="sub">Hier findest du hilfreiche Ressourcen für deine Reise durch Norwegen – von Fähren über Wetterdienste bis zu aktuellen Reiseinfos.</p><div class="folders">
+  tmp.append(h(`<p class="sub">Hier findest du hilfreiche Ressourcen für deine Reise durch Norwegen – von Fähren über Wetterdienste bis zu aktuellen Reiseinfos.</p><div class="folders">
   <div class="folder" data-tab="Anreise"><h3>Anreise &amp; Fähren</h3><p><b>Ab Deutschland</b></p><ul class="links">${L('https://www.colorline.de/kiel-oslo','🛳️ Color Line Kiel–Oslo')}</ul>
    <p><b>Ab Dänemark</b></p><ul class="links">${L('https://www.colorline.de/hirtshals-kristiansand','🛳️ Color Line Hirtshals–Kristiansand')}${L('https://www.colorline.de/hirtshals-larvik','🛳️ Color Line Hirtshals–Larvik')}${L('https://fjordline.com/de/p/unsere-routen/hirtshals-kristiansand','⛴️ Fjord Line Hirtshals–Kristiansand')}${L('https://fjordline.com/de/p/unsere-routen/hirtshals-stavanger-bergen','🛳️ Fjord Line Hirtshals–Stavanger–Bergen')}${L('https://www.gonordiccruiseline.com/fahre-nach-norwegen/','🛳️ Go Nordic Cruiseline Kopenhagen–Oslo')}</ul>
    <p><b>Ab Schweden</b></p><ul class="links">${L('https://www.colorline.de/sandefjord-stroemstad','🛳️ Color Line Strömstad–Sandefjord')}${L('https://www.norled.no','⛴️ Norled – Fähren &amp; Expressboote')}${L('https://www.colorline.de/','🛳️ Color Line – Deutsche Seite')}</ul>
@@ -143,7 +144,8 @@ ordner:{title:'Ordner: Norwegen-Infos auf einen Blick',render(el){
   <div class="folder" data-tab="Geld"><h3>Geld &amp; Wechselkurs</h3><p>Den tagesaktuellen Kurs Euro zu Kronen findest du hier:</p><p><a class="btn" style="color:#2d1f12" href="https://www.xe.com/currencyconverter/convert/?Amount=1&From=EUR&To=NOK" target="_blank" rel="noopener">🔁 Live-Wechselkurs EUR/NOK prüfen</a></p></div>
   <div class="folder" data-tab="Praktisch"><h3>Praktische Infos</h3><ul class="links" style="gap:8px"><li>🛂 <b>Einreise:</b> Für EU-Bürger visumsfrei bis 90 Tage</li><li>💱 <b>Währung:</b> Norwegische Krone (NOK)</li><li>🔌 <b>Strom:</b> 230 V, Stecker Typ C/F (wie in Deutschland)</li><li>🗺️ <b>Karten:</b> Google Maps funktioniert gut – für Offline-Karten: Maps.me oder Gaia GPS</li><li>🧭 <b>Beste Reisezeit:</b> Mai–September (Wanderung), Dezember–März (Nordlichter &amp; Winter)</li></ul></div>
   <div class="folder" data-tab="Links"><h3>Mehr Norwegen-Seiten</h3><ul class="links">${L('https://www.visitnorway.de','🇳🇴 Visit Norway – Offizielle Tourismusseite')}${L('https://www.suednorwegen.org','🌲 Südnorwegen.org – Tipps für den Süden Norwegens')}${L('https://www.nordlandblog.de/','🏔️ Nordlandblog – Reisen &amp; Abenteuer in Norwegen')}${L('https://www.ut.no','🥾 UT.no – Wanderkarten &amp; Routen')}</ul></div>
-  </div>`))}},
+  </div>`));
+  buildShelf(el,tmp)}},
 karte:{title:'Unsere Route 2026',render(el){
   el.append(h(`<p class="sub">Kommende Reisen – hier zeigen wir bald unsere nächsten Touren.</p>
   <a class="route" href="https://norgebever-source.github.io/route-2026/" target="_blank" rel="noopener"><img src="https://norge-bever.blog/wp-content/uploads/2026/11/route-2026-v3.png?w=1200" alt="Karte unserer Route 2026"></a>
@@ -155,6 +157,28 @@ kompass:{title:'Svingen',render(el){
   <div class="btnrow"><a class="btn primary" href="https://norgebever-source.github.io/" target="_blank" rel="noopener">Svingen im Browser öffnen ↗</a>
   <a class="btn" href="https://github.com/norgebever-source/svingen/releases/download/v1.0.1/svingen-1.0.1.apk">Für Android herunterladen (APK)</a></div>`))}}
 };
+
+
+/* ---------- Bücherregal (Norwegen-Infos) ---------- */
+const BOOK_ICON={Anreise:'🛳️',Maut:'🛣️',Zoll:'📱',Wetter:'🌦️',Geld:'💱',Praktisch:'🧭',Links:'🇳🇴'};
+const BOOK_COL=['#7a2e22','#1f4e5a','#5b3a6b','#2f5d3a','#8a6a1f','#3b4a7a','#6b2f3f','#4a5a2a'];
+function buildShelf(el,tmp){
+  const intro=$('.sub',tmp).outerHTML;
+  const books=$$('.folder',tmp).map((f,i)=>{const t=$('h3',f).innerHTML;const c=f.cloneNode(true);$('h3',c).remove();
+    return {tab:f.dataset.tab,title:t,html:c.innerHTML,col:BOOK_COL[i%BOOK_COL.length],h:[96,90,100,88,94,98,92][i%7]}});
+  el.innerHTML='';
+  el.append(h(`${intro}<div class="shelfwrap"><p class="shelfhint">Zieh ein Buch aus dem Regal ›</p><div class="shelf" role="list">${books.map((b,i)=>
+    `<button class="book" role="listitem" data-b="${i}" style="--c:${b.col};--h:${b.h}%" aria-label="Buch öffnen: ${b.title.replace(/<[^>]+>/g,'')}"><span class="ico">${BOOK_ICON[b.tab]||'📘'}</span><span class="sp">${b.title}</span><span class="band"></span></button>`).join('')}</div><div class="plank"></div></div>
+    <div class="openbook" hidden><div class="btnrow"><button class="btn" data-a="shelf">‹ Zurück zum Regal</button></div>
+    <div class="bookstage"><div class="page folder"></div><div class="cover"><span class="ico"></span><span class="ct"></span></div></div></div>`));
+  const wrap=$('.shelfwrap',el),ob=$('.openbook',el),page=$('.page',ob),cover=$('.cover',ob);
+  $$('.book',el).forEach(bt=>bt.onclick=()=>{const b=books[+bt.dataset.b];bt.classList.add('pull');sfx('drawer');
+    setTimeout(()=>{wrap.hidden=true;$('.sub',el).hidden=true;ob.hidden=false;ovT.innerHTML=b.title;
+      page.innerHTML=`<h3>${BOOK_ICON[b.tab]||''} ${b.title}</h3>`+b.html;cover.style.setProperty('--c',b.col);$('.ico',cover).textContent=BOOK_ICON[b.tab]||'📘';$('.ct',cover).innerHTML=b.title;
+      ob.classList.remove('opened');void ob.offsetWidth;requestAnimationFrame(()=>ob.classList.add('opened'));
+      $('.panel',ov).scrollTop=0;bt.classList.remove('pull')},420)});
+  $('[data-a=shelf]',ob).onclick=()=>{ob.hidden=true;ob.classList.remove('opened');wrap.hidden=false;$('.sub',el).hidden=false;ovT.textContent=STATIONS.ordner.title;$('.panel',ov).scrollTop=0};
+}
 
 /* ---------- Ton (aus bis zum Klick) ---------- */
 let ac=null;const amb={on:false,g:null};
