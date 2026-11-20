@@ -90,7 +90,7 @@ fenster:{title:'Blick aus dem Fenster',render(el){
   $('.window-show',el).onclick=()=>openLb(F,i)}},
 tv:{title:'Fernseher',render(el){
   el.append(h(`<p class="sub"><b>Gastrolle als Angelguide</b> – Allein mit dem Camper nach Norwegen – ich wollte nicht zurück<br><small>von Andreas Hobby &amp; Freizeit · mit Max als Angler aus Bremen</small></p>
-  <div class="tv"><div class="scr"><img src="https://i.ytimg.com/vi/rv2EALzhqY8/maxresdefault.jpg" alt="Videovorschau"><button aria-label="Video abspielen">▶</button></div><div class="knobs"><i></i><i></i></div></div>
+  <div class="tv"><div class="scr"><img src="https://i.ytimg.com/vi/rv2EALzhqY8/maxresdefault.jpg" alt="Videovorschau"><button aria-label="Video abspielen">▶</button></div><div class="stand"></div></div>
   <div class="btnrow"><a class="btn" href="https://www.youtube.com/watch?v=rv2EALzhqY8" target="_blank" rel="noopener">▶ Auf YouTube ansehen ↗</a></div>`));
   $('.scr button',el).onclick=e=>{const s=$('.scr',el);s.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/rv2EALzhqY8?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="YouTube-Video"></iframe>'}}},
 rahmen:{title:'Unsere Galerien',render(el){el.innerHTML='';
@@ -146,6 +146,15 @@ ordner:{title:'Ordner: Norwegen-Infos auf einen Blick',render(el){
   <div class="folder" data-tab="Links"><h3>Mehr Norwegen-Seiten</h3><ul class="links">${L('https://www.visitnorway.de','🇳🇴 Visit Norway – Offizielle Tourismusseite')}${L('https://www.suednorwegen.org','🌲 Südnorwegen.org – Tipps für den Süden Norwegens')}${L('https://www.nordlandblog.de/','🏔️ Nordlandblog – Reisen &amp; Abenteuer in Norwegen')}${L('https://www.ut.no','🥾 UT.no – Wanderkarten &amp; Routen')}</ul></div>
   </div>`));
   buildShelf(el,tmp)}},
+wir:{title:'Wohnwagen und wir',render(el){
+  const P=[{src:'https://norge-bever.blog/wp-content/uploads/2026/11/rabben-feriesenter-03.jpg',cap:'Rabben – Gespann vor dem Wasserfall'},
+           {src:'https://norge-bever.blog/wp-content/uploads/2026/11/lone-camping-07.jpg',cap:'Selfie vor der Fantoft Stabkirche'},
+           {src:'https://norge-bever.blog/wp-content/uploads/2025/07/img_20211224_154537.jpg',cap:'About'}];
+  const T=["Moin.Wir sind eine Familie,die das Reisen liebt….", "Wir das sind Nicole,Max und Aaron unser Sohn", "Da wir sehr schöne Reisen unternehmen und auch schon unternommen haben,", "werde wir hier unserer Eindrücke,Erfahrungen,Freuden und auch manchmal Entäuschungen mit Euch teilen.", "Es wird jedoch keine Malle,Strand und Ballermann Berichte geben…", "Wir sind seit einigen Jahren in den Genuss von den eher nordischen Länder gekommen…", "also heisst Norwegen,Schweden,Schottland usw.", "Wir reisen meistens mit dem Auto und unseren treuen Wilki(Wohnwagen)", "Freut Euch auf traumhafte Fotos und Berichte…"];
+  el.append(h(`<div class="wirprints">${P.map((p,i)=>`<button data-i="${i}" style="transform:rotate(${[-3,2,-1][i]}deg)"><img src="${W(p.src,700)}" alt="${esc(p.cap)}"><span>${esc(p.cap)}</span></button>`).join('')}</div>
+  <div class="about"><h3>About</h3>${T.map(t=>`<p>${esc(t)}</p>`).join('')}</div>
+  <div class="btnrow"><a class="btn" href="https://norge-bever.blog/about/" target="_blank" rel="noopener">About-Seite auf dem Blog ↗</a></div>`));
+  $$('.wirprints button',el).forEach(b=>b.onclick=()=>openLb(P,+b.dataset.i))}},
 karte:{title:'Unsere Route 2026',render(el){
   el.append(h(`<p class="sub">Kommende Reisen – hier zeigen wir bald unsere nächsten Touren.</p>
   <a class="route" href="https://norgebever-source.github.io/route-2026/" target="_blank" rel="noopener"><img src="https://norge-bever.blog/wp-content/uploads/2026/11/route-2026-v3.png?w=1200" alt="Karte unserer Route 2026"></a>
