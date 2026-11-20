@@ -155,4 +155,4 @@ section{position:fixed;inset:0;opacity:0;visibility:hidden;transition:opacity 1.
 #lb .nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);border:0;font-size:40px;width:52px;height:72px;border-radius:10px}
 #lb .prev{left:8px}#lb .next{right:8px}
 
-@media (max-width:560px){.drawer>button{flex-wrap:wrap;font-size:21px;row-gap:4px}.drawer>button small{margin-left:60px;flex-basis:100%}.tour iframe{height:320px}}
+@media (max-width:560px){.drawer>button{flex-wrap:wrap;font-size:21px;row-gap:4px}.drawer>button small{margin-left:60px;flex-basis:100%}.tour iframe{height:320px}.prints button{width:40vw}}
