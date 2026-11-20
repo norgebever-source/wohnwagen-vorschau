@@ -188,8 +188,6 @@ section{position:fixed;inset:0;opacity:0;visibility:hidden;transition:opacity 1.
 /* Kleine Bilder: Wohnwagen und wir */
 .hs.wirfoto{position:absolute;padding:5px;background:#f3ead8;border:3px solid #7a5434;border-radius:2px;box-shadow:4px 6px 10px rgba(0,0,0,.45);overflow:visible}
 .hs.wirfoto img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;pointer-events:none}
-.wf1{left:73.2%;top:10.5%;width:5.6%;transform:perspective(600px) rotateY(-26deg) rotate(-1deg)}
-.wf2{left:79.6%;top:9.5%;width:5.9%;transform:perspective(600px) rotateY(-26deg) rotate(1deg)}
 .hs.wf3{left:90.6%;top:68%;width:6.4%;padding:5px 5px 16px;border:0;background:#fbf7ee;transform:rotate(5deg)}
 .hs.wf3 img{aspect-ratio:3/4}
 .wf3:before{content:"";position:absolute;top:-6px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff6b5b,#a51d12);box-shadow:0 2px 3px rgba(0,0,0,.5);z-index:2}
