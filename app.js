@@ -35,7 +35,7 @@ function openStation(id,el){if(busy)return;const hs=(el&&el.classList.contains('
   if(r.left<0||r.right>innerWidth){v.scrollTo({left:v.scrollLeft+r.left+r.width/2-innerWidth/2,behavior:'smooth'})}
   setTimeout(()=>{const cx=(hs.offsetLeft+hs.offsetWidth/2)/stage.offsetWidth*100,cy=(hs.offsetTop+hs.offsetHeight/2)/stage.offsetHeight*100;
     stage.style.transformOrigin=cx+'% '+cy+'%';stage.classList.add('zoom');stage.style.transform='scale(2.3)';sfx('whoosh');
-    setTimeout(()=>{showOv(id);busy=false;if(hs.dataset.photo!=null&&STATIONS[id].photos)openLb(STATIONS[id].photos,+hs.dataset.photo)},780)},r.left<0||r.right>innerWidth?420:0)}
+    setTimeout(()=>{showOv(id);busy=false;if(hs===el&&hs.dataset.photo!=null&&STATIONS[id].photos)openLb(STATIONS[id].photos,+hs.dataset.photo)},780)},r.left<0||r.right>innerWidth?420:0)}
 $$('[data-st]').forEach(b=>b.addEventListener('click',()=>openStation(b.dataset.st,b)));
 
 /* ---------- Overlay ---------- */
