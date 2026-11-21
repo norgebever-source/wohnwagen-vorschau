@@ -30,13 +30,13 @@ function centerRoom(){const v=$('#vpI');v.scrollLeft=(v.scrollWidth-v.clientWidt
 
 /* ---------- Kamera auf Station ---------- */
 const stage=$('#stageI');
-function openStation(id){if(busy)return;const hs=$(`.hs[data-st="${id}"]`,stage);if(!hs)return;busy=true;
+function openStation(id,el){if(busy)return;const hs=(el&&el.classList.contains('hs')&&stage.contains(el))?el:$(`.hs[data-st="${id}"]`,stage);if(!hs)return;busy=true;
   const v=$('#vpI');const r=hs.getBoundingClientRect();
   if(r.left<0||r.right>innerWidth){v.scrollTo({left:v.scrollLeft+r.left+r.width/2-innerWidth/2,behavior:'smooth'})}
   setTimeout(()=>{const cx=(hs.offsetLeft+hs.offsetWidth/2)/stage.offsetWidth*100,cy=(hs.offsetTop+hs.offsetHeight/2)/stage.offsetHeight*100;
     stage.style.transformOrigin=cx+'% '+cy+'%';stage.classList.add('zoom');stage.style.transform='scale(2.3)';sfx('whoosh');
-    setTimeout(()=>{showOv(id);busy=false},780)},r.left<0||r.right>innerWidth?420:0)}
-$$('[data-st]').forEach(b=>b.addEventListener('click',()=>openStation(b.dataset.st)));
+    setTimeout(()=>{showOv(id);busy=false;if(hs.dataset.photo!=null&&STATIONS[id].photos)openLb(STATIONS[id].photos,+hs.dataset.photo)},780)},r.left<0||r.right>innerWidth?420:0)}
+$$('[data-st]').forEach(b=>b.addEventListener('click',()=>openStation(b.dataset.st,b)));
 
 /* ---------- Overlay ---------- */
 const ov=$('#ov'),ovT=$('#ovTitle'),ovB=$('#ovBody');let ovOpen=false;
@@ -146,10 +146,10 @@ ordner:{title:'Ordner: Norwegen-Infos auf einen Blick',render(el){
   <div class="folder" data-tab="Links"><h3>Mehr Norwegen-Seiten</h3><ul class="links">${L('https://www.visitnorway.de','🇳🇴 Visit Norway – Offizielle Tourismusseite')}${L('https://www.suednorwegen.org','🌲 Südnorwegen.org – Tipps für den Süden Norwegens')}${L('https://www.nordlandblog.de/','🏔️ Nordlandblog – Reisen &amp; Abenteuer in Norwegen')}${L('https://www.ut.no','🥾 UT.no – Wanderkarten &amp; Routen')}</ul></div>
   </div>`));
   buildShelf(el,tmp)}},
-wir:{title:'Wohnwagen und wir',render(el){
-  const P=[{src:'https://norge-bever.blog/wp-content/uploads/2026/11/rabben-feriesenter-03.jpg',cap:'Rabben – Gespann vor dem Wasserfall'},
+wir:{title:'Wohnwagen und wir',photos:[{src:'https://norge-bever.blog/wp-content/uploads/2026/11/rabben-feriesenter-03.jpg',cap:'Rabben – Gespann vor dem Wasserfall'},
            {src:'https://norge-bever.blog/wp-content/uploads/2026/11/lone-camping-07.jpg',cap:'Selfie vor der Fantoft Stabkirche'},
-           {src:'https://norge-bever.blog/wp-content/uploads/2025/07/img_20211224_154537.jpg',cap:'About'}];
+           {src:'https://norge-bever.blog/wp-content/uploads/2025/07/img_20211224_154537.jpg',cap:'About'}],render(el){
+  const P=this.photos;
   const T=["Moin.Wir sind eine Familie,die das Reisen liebt….", "Wir das sind Nicole,Max und Aaron unser Sohn", "Da wir sehr schöne Reisen unternehmen und auch schon unternommen haben,", "werde wir hier unserer Eindrücke,Erfahrungen,Freuden und auch manchmal Entäuschungen mit Euch teilen.", "Es wird jedoch keine Malle,Strand und Ballermann Berichte geben…", "Wir sind seit einigen Jahren in den Genuss von den eher nordischen Länder gekommen…", "also heisst Norwegen,Schweden,Schottland usw.", "Wir reisen meistens mit dem Auto und unseren treuen Wilki(Wohnwagen)", "Freut Euch auf traumhafte Fotos und Berichte…"];
   el.append(h(`<div class="wirprints">${P.map((p,i)=>`<button data-i="${i}" style="transform:rotate(${[-3,2,-1][i]}deg)"><img src="${W(p.src,700)}" alt="${esc(p.cap)}"><span>${esc(p.cap)}</span></button>`).join('')}</div>
   <div class="about"><h3>About</h3>${T.map(t=>`<p>${esc(t)}</p>`).join('')}</div>
