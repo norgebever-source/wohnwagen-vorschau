@@ -7,19 +7,38 @@ let phase='aussen';
 function setPhase(p){body.classList.remove('phase-'+phase);phase=p;body.classList.add('phase-'+p)}
 
 /* ---------- Außen: Tür im Bild zentrieren ---------- */
+let pan=0;
 function fitAussen(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);
-  const shift=Math.min(0.182*Wd,(Wd-vw)/2);$('#stageA').style.setProperty('--shift',shift+'px')}
+  const shift=Math.min(0.182*Wd,Math.max(0,(Wd-vw)/2));
+  $('#stageA').style.setProperty('--shift',shift+'px');
+  if(Wd<=vw)pan=0;
+  else{const minPan=-(Wd-vw)/2-shift;pan=Math.max(minPan,Math.min(0,pan))}
+  $('#stageA').style.setProperty('--pan',pan+'px')}
 addEventListener('resize',fitAussen);fitAussen();
+
+/* Wischen auf der Außenansicht, damit die Schilder erreichbar bleiben */
+(()=>{const vp=$('#vpA');if(!vp)return;let sx=0,sp=0,moved=false,drag=false;
+  vp.addEventListener('pointerdown',e=>{if(phase!=='aussen')return;drag=true;moved=false;sx=e.clientX;sp=pan;try{vp.setPointerCapture(e.pointerId)}catch(err){}});
+  vp.addEventListener('pointermove',e=>{if(!drag||phase!=='aussen')return;const dx=e.clientX-sx;if(Math.abs(dx)>8)moved=true;if(moved){pan=sp+dx;fitAussen()}});
+  const end=e=>{if(!drag)return;drag=false;if(moved)e.preventDefault()};
+  vp.addEventListener('pointerup',end);vp.addEventListener('pointercancel',end);
+  vp.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false}},true)})();
 
 /* ---------- Eintreten ---------- */
 let busy=false;
-function enter(){if(busy||phase!=='aussen')return;busy=true;setPhase('door');sfx('door');
+function enter(){if(busy||phase!=='aussen')return;busy=true;pan=0;fitAussen();setPhase('door');sfx('door');
   setTimeout(()=>$('#stageA').classList.add('dolly'),1250);
   setTimeout(()=>$('#flash').classList.add('on'),2350);
   setTimeout(()=>{setPhase('innen');$('#stageA').classList.remove('dolly');centerRoom();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),5000);
      setTimeout(()=>$('#flash').classList.remove('on'),80);busy=false},3250)}
 $('#enter').onclick=enter;$('#doorBtn').onclick=enter;
-$('#out').onclick=()=>{closeOv(true);setPhase('aussen')};
+$('#out').onclick=()=>{closeOv(true);pan=0;fitAussen();setPhase('aussen')};
+function goAussen(){if(busy)return;setPhase('aussen');fitAussen();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
+function goView(id){if(busy||phase!=='aussen')return;setPhase(id);body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
+$('#toFjord').onclick=()=>goView('fjord');
+$('#toBerge').onclick=()=>goView('berge');
+$('#fromFjord').onclick=goAussen;
+$('#fromBerge').onclick=goAussen;
 function centerRoom(){const v=$('#vpI');v.scrollLeft=(v.scrollWidth-v.clientWidth)*0.5}
 
 /* ---------- Kamera auf Station ---------- */
