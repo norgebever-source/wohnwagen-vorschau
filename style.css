@@ -15,8 +15,8 @@ section{position:fixed;inset:0;opacity:0;visibility:hidden;pointer-events:none;t
 .stage-view{left:50%;translate:calc(-50% + var(--pan,0px)) -50% 0;animation:breathe 18s ease-in-out infinite alternate}
 .schild{position:absolute;height:auto;pointer-events:none;user-select:none;-webkit-user-select:none}
 .schild-main{left:54.2%;top:39.2%;width:17.2%}
-.schild-back-fjord{left:35%;top:40%;width:18%}
-.schild-back-berge{left:45%;top:36%;width:19%}
+.schild-back-fjord{left:38%;top:36%;width:16%}
+.schild-back-berge{left:48%;top:38%;width:17%}
 .schild-hs .dot,.schild-hs .lbl{display:none}
 @keyframes breathe{from{scale:1.0}to{scale:1.045}}
 #stageA .glow{position:absolute;left:24%;top:30%;width:16%;height:50%;background:radial-gradient(closest-side,rgba(255,196,110,.55),rgba(255,170,80,0));mix-blend-mode:screen;opacity:.45;animation:flicker 4s ease-in-out infinite;pointer-events:none}
