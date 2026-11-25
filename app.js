@@ -3,13 +3,24 @@ const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelect
 const body=document.body, G=window.GALERIEN, F=window.FENSTER;
 const W=(u,w)=>u+'?w='+w;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let phase='innen';
+let phase='aussen';
 function setPhase(p){body.classList.remove('phase-'+phase);phase=p;body.classList.add('phase-'+p)}
 
+/* ---------- Außen: Tür im Bild zentrieren ---------- */
+function fitAussen(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);
+  const shift=Math.min(0.182*Wd,(Wd-vw)/2);$('#stageA').style.setProperty('--shift',shift+'px')}
+addEventListener('resize',fitAussen);fitAussen();
+
+/* ---------- Eintreten ---------- */
 let busy=false;
+function enter(){if(busy||phase!=='aussen')return;busy=true;setPhase('door');sfx('door');
+  setTimeout(()=>$('#stageA').classList.add('dolly'),1250);
+  setTimeout(()=>$('#flash').classList.add('on'),2350);
+  setTimeout(()=>{setPhase('innen');$('#stageA').classList.remove('dolly');centerRoom();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),5000);
+     setTimeout(()=>$('#flash').classList.remove('on'),80);busy=false},3250)}
+$('#enter').onclick=enter;$('#doorBtn').onclick=enter;
+$('#out').onclick=()=>{closeOv(true);setPhase('aussen')};
 function centerRoom(){const v=$('#vpI');v.scrollLeft=(v.scrollWidth-v.clientWidth)*0.5}
-centerRoom();
-body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),5000);
 
 /* ---------- Kamera auf Station ---------- */
 const stage=$('#stageI');
