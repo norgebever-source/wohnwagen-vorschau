@@ -32,12 +32,13 @@ function bindTap(el,fn){if(!el)return;let handled=0;el.addEventListener('pointer
 /* ---------- Außen: Tür im Bild zentrieren ---------- */
 let pan=0;
 function aussenBounds(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);
-  const shift=Math.min(0.182*Wd,Math.max(0,(Wd-vw)/2));
+  const overflow=Math.max(0,(Wd-vw)/2);
+  const shift=Math.min(0.182*Wd,overflow);
   if(Wd<=vw)return{min:0,max:0,shift:0};
-  return{min:-(Wd-vw)/2-shift,max:0,shift}}
+  return{min:-overflow-shift,max:overflow-shift,shift}}
 function fitAussen(){const b=aussenBounds();$('#stageA').style.setProperty('--shift',b.shift+'px');pan=Math.max(b.min,Math.min(b.max,pan));$('#stageA').style.setProperty('--pan',pan+'px')}
 function aussenSignPan(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);const shift=Math.min(0.182*Wd,Math.max(0,(Wd-vw)/2));return Math.max(aussenBounds().min,-0.13*Wd-shift)}
-const panA=attachPan($('#vpA'),{bounds:aussenBounds,get:()=>pan,set:p=>{$('#stageA').style.setProperty('--pan',(pan=p)+'px')},active:()=>phase==='aussen'&&!busy,aim:(v,p)=>v<0?aussenSignPan():0});
+const panA=attachPan($('#vpA'),{bounds:aussenBounds,get:()=>pan,set:p=>{$('#stageA').style.setProperty('--pan',(pan=p)+'px')},active:()=>phase==='aussen'&&!busy,aim:(v,p)=>v<0?aussenSignPan():null});
 
 /* Fjord / Berge: vom Zentrum aus wischen */
 let panF=0,panB=0;
