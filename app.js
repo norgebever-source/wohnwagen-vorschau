@@ -6,26 +6,28 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 let phase='aussen';
 function setPhase(p){body.classList.remove('phase-'+phase);phase=p;body.classList.add('phase-'+p)}
 
-/* ---------- Wischen: 1:1, rAF, Schwung ---------- */
-const TAP=8, GAIN=2, FRICTION=.95, MIN_V=.12, MAX_V=3.5, REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* ---------- Wischen: 1:1, rAF, Schwung; Tipp bleibt Tipp ---------- */
+const TAP=24, GAIN=2.2, FRICTION=.95, MIN_V=.08, MAX_V=3.5, REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const pans=[];
+let didDrag=false,navLock=0;
 function attachPan(vp,opts){
   if(!vp)return{stop(){},goto(){},clamp(){}};
-  let drag=false,moved=false,blockClick=false,pid=null,sx=0,sp=0,lx=0,lt=0,vx=0,samples=[],raf=0,inert=0,glide=0;
+  let drag=false,moved=false,blockClick=false,pid=null,sx=0,sy=0,sp=0,lx=0,ly=0,lt=0,vx=0,samples=[],raf=0,inert=0,glide=0;
   const stopAnim=()=>{if(raf)cancelAnimationFrame(raf);if(inert)cancelAnimationFrame(inert);if(glide)cancelAnimationFrame(glide);raf=inert=glide=0;vx=0};
   const clamp=p=>{const b=opts.bounds();return Math.max(b.min,Math.min(b.max,p))};
   const apply=p=>opts.set(clamp(p));
-  const onDown=e=>{if(!opts.active()||e.button)return;stopAnim();drag=true;moved=false;blockClick=false;pid=e.pointerId;sx=lx=e.clientX;sp=opts.get();lt=performance.now();vx=0;samples=[];if(!raf)raf=requestAnimationFrame(function tick(){if(!drag){raf=0;return}apply(sp+(lx-sx));raf=requestAnimationFrame(tick)})};
-  const onMove=e=>{if(!drag||e.pointerId!==pid)return;const now=performance.now(),x=e.clientX,dt=now-lt;if(Math.abs(x-sx)>TAP)moved=true;if(dt>0){samples.push({v:(x-lx)/dt,t:now});if(samples.length>8)samples.shift()}lx=x;lt=now};
-  const onEnd=e=>{if(!drag||(e.pointerId!=null&&e.pointerId!==pid))return;drag=false;pid=null;if(raf){cancelAnimationFrame(raf);raf=0}apply(sp+(lx-sx));if(moved){blockClick=true;setTimeout(()=>blockClick=false,300)}if(!moved||REDUCE)return;const now=performance.now(),rec=samples.filter(s=>now-s.t<120);if(!rec.length)return;let v=rec.reduce((a,s)=>a+s.v,0)/rec.length*GAIN;if(Math.abs(v)<MIN_V)return;vx=Math.max(-MAX_V,Math.min(MAX_V,v));let prev=performance.now();inert=requestAnimationFrame(function tick(ts){const dt=Math.min(32,ts-prev);prev=ts;const b=opts.bounds(),n=opts.get()+vx*dt;vx*=Math.pow(FRICTION,dt/16);if(n<=b.min||n>=b.max){apply(n<=b.min?b.min:b.max);vx=0;inert=0;return}opts.set(n);if(Math.abs(vx)<.02){vx=0;inert=0;return}inert=requestAnimationFrame(tick)})};
+  const onDown=e=>{if(!opts.active()||e.button)return;stopAnim();drag=true;moved=false;didDrag=false;blockClick=false;pid=e.pointerId;sx=lx=e.clientX;sy=ly=e.clientY;sp=opts.get();lt=performance.now();vx=0;samples=[{x:lx,t:lt}];if(!raf)raf=requestAnimationFrame(function tick(){if(!drag){raf=0;return}if(moved)apply(sp+(lx-sx));raf=requestAnimationFrame(tick)})};
+  const onMove=e=>{if(!drag||e.pointerId!==pid)return;const now=performance.now(),x=e.clientX,y=e.clientY;if(Math.hypot(x-sx,y-sy)>TAP){moved=true;didDrag=true}samples.push({x,t:now});while(samples.length>24||(samples[0]&&now-samples[0].t>180))samples.shift();lx=x;ly=y;lt=now};
+  const onEnd=e=>{if(!drag||(e.pointerId!=null&&e.pointerId!==pid))return;drag=false;pid=null;if(raf){cancelAnimationFrame(raf);raf=0}if(moved){apply(sp+(lx-sx));blockClick=true;setTimeout(()=>blockClick=false,350)}else{didDrag=false}if(!moved||REDUCE)return;const now=performance.now();if(now-lt>80)return;const last=samples[samples.length-1]||{x:lx,t:lt};let old=samples[0]||last;for(const s of samples){if(last.t-s.t<=100){old=s;break}}const dt=Math.max(16,last.t-old.t);let v=(last.x-old.x)/dt*GAIN;if(opts.aim){const aim=opts.aim(v,opts.get());if(aim!=null){const need=aim-opts.get(),coast=v*16/(1-FRICTION);if(need!==0&&Math.sign(need)===Math.sign(v)&&Math.abs(coast)<Math.abs(need))v=need*(1-FRICTION)/16}}if(Math.abs(v)<MIN_V)return;vx=Math.max(-MAX_V,Math.min(MAX_V,v));let prev=now;inert=requestAnimationFrame(function tick(ts){const d=Math.min(32,ts-prev);prev=ts;const b=opts.bounds(),n=opts.get()+vx*d;vx*=Math.pow(FRICTION,d/16);if(n<=b.min||n>=b.max){apply(n<=b.min?b.min:b.max);vx=0;inert=0;return}opts.set(n);if(Math.abs(vx)<.02){vx=0;inert=0;return}inert=requestAnimationFrame(tick)})};
   vp.addEventListener('pointerdown',onDown,{passive:true});
   addEventListener('pointermove',onMove,{passive:true});
   addEventListener('pointerup',onEnd,{passive:true});
   addEventListener('pointercancel',onEnd,{passive:true});
-  vp.addEventListener('click',e=>{if(blockClick||moved){e.preventDefault();e.stopPropagation();blockClick=false;moved=false}},true);
+  vp.addEventListener('click',e=>{if(blockClick||moved){e.preventDefault();e.stopPropagation();blockClick=false}},true);
   const ctl={stop(){drag=false;pid=null;stopAnim()},clamp(){apply(opts.get())},goto(target,ms){stopAnim();const from=opts.get(),to=clamp(target),t0=performance.now();if(REDUCE||!ms){opts.set(to);return}glide=requestAnimationFrame(function tick(t){const k=Math.min(1,(t-t0)/ms),e=1-Math.pow(1-k,3);opts.set(from+(to-from)*e);if(k<1)glide=requestAnimationFrame(tick);else glide=0})}};
   pans.push(ctl);return ctl}
 function stopPans(){pans.forEach(p=>p.stop())}
+function bindTap(el,fn){if(!el)return;let handled=0;el.addEventListener('pointerup',e=>{if(e.button||didDrag||performance.now()<navLock)return;handled=performance.now();fn(e)},{passive:true});el.addEventListener('click',e=>{if(didDrag||performance.now()<navLock||performance.now()-handled<500){e.preventDefault();e.stopPropagation();return}fn(e)})}
 
 /* ---------- Außen: Tür im Bild zentrieren ---------- */
 let pan=0;
@@ -34,7 +36,8 @@ function aussenBounds(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/
   if(Wd<=vw)return{min:0,max:0,shift:0};
   return{min:-(Wd-vw)/2-shift,max:0,shift}}
 function fitAussen(){const b=aussenBounds();$('#stageA').style.setProperty('--shift',b.shift+'px');pan=Math.max(b.min,Math.min(b.max,pan));$('#stageA').style.setProperty('--pan',pan+'px')}
-const panA=attachPan($('#vpA'),{bounds:aussenBounds,get:()=>pan,set:p=>{$('#stageA').style.setProperty('--pan',(pan=p)+'px')},active:()=>phase==='aussen'&&!busy});
+function aussenSignPan(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);const shift=Math.min(0.182*Wd,Math.max(0,(Wd-vw)/2));return Math.max(aussenBounds().min,-0.13*Wd-shift)}
+const panA=attachPan($('#vpA'),{bounds:aussenBounds,get:()=>pan,set:p=>{$('#stageA').style.setProperty('--pan',(pan=p)+'px')},active:()=>phase==='aussen'&&!busy,aim:(v,p)=>v<0?aussenSignPan():0});
 
 /* Fjord / Berge: vom Zentrum aus wischen */
 let panF=0,panB=0;
@@ -59,14 +62,14 @@ function enter(){if(busy||phase!=='aussen')return;busy=true;stopPans();pan=0;fit
   setTimeout(()=>$('#flash').classList.add('on'),2350);
   setTimeout(()=>{setPhase('innen');$('#stageA').classList.remove('dolly');centerRoom();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),5000);
      setTimeout(()=>$('#flash').classList.remove('on'),80);busy=false},3250)}
-$('#enter').onclick=enter;$('#doorBtn').onclick=enter;
+$('#enter').onclick=enter;bindTap($('#doorBtn'),enter);
 $('#out').onclick=()=>{closeOv(true);stopPans();pan=0;fitAussen();setPhase('aussen')};
-function goAussen(){if(busy)return;stopPans();setPhase('aussen');fitAussen();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
-function goView(id){if(busy||phase!=='aussen')return;stopPans();if(id==='fjord'){panF=0;$('#stageF').style.setProperty('--pan','0px')}else{panB=0;$('#stageB').style.setProperty('--pan','0px')}setPhase(id);body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
-$('#toFjord').onclick=()=>goView('fjord');
-$('#toBerge').onclick=()=>goView('berge');
-$('#fromFjord').onclick=goAussen;
-$('#fromBerge').onclick=goAussen;
+function goAussen(){if(busy||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();setPhase('aussen');fitAussen();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
+function goView(id){if(busy||phase!=='aussen'||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(id==='fjord'){panF=0;$('#stageF').style.setProperty('--pan','0px')}else{panB=0;$('#stageB').style.setProperty('--pan','0px')}setPhase(id);body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
+bindTap($('#toFjord'),()=>goView('fjord'));
+bindTap($('#toBerge'),()=>goView('berge'));
+bindTap($('#fromFjord'),goAussen);
+bindTap($('#fromBerge'),goAussen);
 function centerRoom(){const b=innenBounds();panI=(b.min+b.max)/2;$('#stageI').style.setProperty('--pan',panI+'px')}
 
 /* ---------- Kamera auf Station ---------- */
