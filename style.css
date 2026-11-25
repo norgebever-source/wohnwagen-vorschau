@@ -5,42 +5,15 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 button{font:inherit;color:inherit;cursor:pointer}
 a{color:var(--gold)}
 section{position:fixed;inset:0;opacity:0;visibility:hidden;transition:opacity 1.2s ease,visibility 0s 1.2s}
-.phase-intro #intro,.phase-aussen #aussen,.phase-door #aussen,.phase-innen #innen{opacity:1;visibility:visible;transition:opacity 1.2s ease}
-/* ---------- Vorspann ---------- */
-#intro{background:#000;display:grid;place-items:center;text-align:center;z-index:5}
-#intro .bars:before,#intro .bars:after{content:"";position:absolute;left:0;right:0;height:11vh;background:#000;z-index:2}#intro .bars:before{top:0}#intro .bars:after{bottom:0}
-#intro .card{position:absolute;opacity:0;padding:0 24px;animation:card 3.4s ease forwards}
-#intro .c1{animation-delay:.4s}#intro .c2{animation-delay:3.4s;animation-duration:4s}#intro .c3{animation-delay:7.2s;animation-duration:3.6s}
-#intro small{font-family:var(--serif);font-style:italic;font-size:clamp(18px,3vw,28px);letter-spacing:.08em;color:#cdbf9f}
-#intro h1{font-family:var(--serif);font-weight:700;font-size:clamp(46px,10vw,120px);margin:0;letter-spacing:.02em;color:#f7e7c4;text-shadow:0 0 40px rgba(242,179,90,.35)}
-#intro .tag{font-family:var(--serif);font-style:italic;font-size:clamp(17px,2.6vw,26px);color:#d9cba9;margin:.6em 0 0}
-.chapters{list-style:none;padding:0;margin:0;font-family:var(--serif);font-size:clamp(22px,4vw,40px);line-height:1.5}
-.chapters b{display:inline-block;min-width:6.2em;color:var(--gold);font-weight:500;font-style:italic}
-@keyframes card{0%{opacity:0;transform:scale(1.04);filter:blur(6px)}18%{opacity:1;transform:scale(1);filter:blur(0)}80%{opacity:1}100%{opacity:0;transform:scale(.98)}}
+.phase-innen #innen{opacity:1;visibility:visible;transition:opacity 1.2s ease}
 .ghost{background:rgba(10,12,16,.45);border:1px solid rgba(246,238,221,.25);border-radius:999px;padding:9px 16px;font-size:14px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-#skip{position:absolute;bottom:calc(13vh + env(safe-area-inset-bottom));right:20px;z-index:3}
 /* ---------- Bühne ---------- */
 .viewport{position:absolute;inset:0;overflow:hidden}
 .stage{position:absolute;top:50%;width:max(100vw,calc(100dvh*16/9));aspect-ratio:16/9;transform-origin:50% 50%;transition:transform 1.25s cubic-bezier(.65,0,.25,1);will-change:transform}
 .stage .bg{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-select:none}
-#stageA{left:50%;translate:calc(-50% + var(--shift,0px)) -50%;animation:breathe 18s ease-in-out infinite alternate}
-@keyframes breathe{from{scale:1.0}to{scale:1.045}}
-#stageA .glow{position:absolute;left:24%;top:30%;width:16%;height:50%;background:radial-gradient(closest-side,rgba(255,196,110,.55),rgba(255,170,80,0));mix-blend-mode:screen;opacity:.45;animation:flicker 4s ease-in-out infinite;pointer-events:none}
 @keyframes flicker{0%,100%{opacity:.4}50%{opacity:.6}}
-.tuer{position:absolute;left:28.906%;top:38.61%;width:5.781%;height:32.22%;transform-origin:0 50%;transform:perspective(900px) rotateY(0deg);transition:transform 1.6s cubic-bezier(.5,0,.2,1);pointer-events:none}
-.phase-door .tuer,.door-open .tuer{transform:perspective(900px) rotateY(-178deg)}
-.phase-door #stageA{animation:none}
-/* Kamera fährt durch die Tür */
-.phase-door #stageA.dolly{transform:scale(7);transform-origin:31.8% 55%;transition:transform 1.8s cubic-bezier(.7,0,.3,1)}
 #flash{background:radial-gradient(circle at 50% 55%,#ffe2ad,#f2a24a 60%,#2a1606);opacity:0;transition:opacity .9s ease;z-index:40}
 #flash.on{opacity:1}
-.caption{position:absolute;left:0;right:0;bottom:0;padding:18vh 6vw calc(28px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(5,8,12,.82));pointer-events:none;transition:opacity .6s}
-.caption>*{pointer-events:auto}
-.phase-door .caption{opacity:0}
-.kicker{margin:0;color:var(--gold);font-family:var(--serif);font-style:italic;font-size:18px}
-.caption h2{font-family:var(--serif);font-size:clamp(34px,6vw,64px);margin:.05em 0;line-height:1}
-.caption p{margin:.2em 0 1em;opacity:.85}
-.cta{background:var(--gold);color:#241404;border:0;border-radius:999px;padding:13px 26px;font-weight:600;font-size:16px;box-shadow:0 6px 30px rgba(242,179,90,.4)}
 /* ---------- Hotspots ---------- */
 .hs{position:absolute;background:transparent;border:0;padding:0;border-radius:14px;outline:none}
 .hs .dot{position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px;border-radius:50%;background:rgba(255,214,150,.95);box-shadow:0 0 0 0 rgba(255,214,150,.7);animation:pulse 2.4s infinite}
@@ -49,15 +22,12 @@ section{position:fixed;inset:0;opacity:0;visibility:hidden;transition:opacity 1.
 .hs:hover,.hs:focus-visible{background:radial-gradient(closest-side,rgba(255,220,160,.18),transparent);box-shadow:inset 0 0 0 1px rgba(255,220,160,.35)}
 .hs:hover .lbl,.hs:focus-visible .lbl,.labels-on .hs .lbl{opacity:1}
 @media (hover:none){.hs .lbl{opacity:.92;font-size:11px;padding:3px 8px}}
-.door-hs{left:28.4%;top:38%;width:6.8%;height:33.5%}
-.lamp{position:absolute;left:28%;top:10%;width:14%;height:22%;background:radial-gradient(closest-side,rgba(255,200,120,.45),transparent);mix-blend-mode:screen;animation:flicker 5s ease-in-out infinite;pointer-events:none}
+.lamp{position:absolute;left:31%;top:16%;width:6%;height:12%;background:radial-gradient(closest-side,rgba(255,200,120,.45),transparent);mix-blend-mode:screen;animation:flicker 5s ease-in-out infinite;pointer-events:none}
 /* Innen: auf Hochkant wischen */
 .scroller{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .scroller::-webkit-scrollbar{display:none}
 #stageI{left:0;top:0;height:100dvh;width:auto;min-width:100vw;aspect-ratio:16/9}
 @media (min-aspect-ratio:16/9){#stageI{width:100vw;height:auto;top:50%;translate:0 -50%}}
-.phase-innen #stageI{animation:dollyIn 2.2s cubic-bezier(.2,.7,.2,1)}
-@keyframes dollyIn{from{transform:scale(1.35);filter:brightness(1.6) blur(3px)}to{transform:scale(1);filter:none}}
 #stageI.zoom{transition:transform 1s cubic-bezier(.65,0,.25,1)}
 .hint{position:absolute;bottom:calc(84px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);font-size:13px;opacity:0;pointer-events:none;background:rgba(0,0,0,.45);padding:6px 12px;border-radius:999px}
 @media (max-aspect-ratio:1/1){.phase-innen .hint{animation:hint 5s 2.4s ease forwards}}
@@ -68,13 +38,12 @@ section{position:fixed;inset:0;opacity:0;visibility:hidden;transition:opacity 1.
 .dock button:hover{background:rgba(255,214,150,.12)}
 .top-left{position:absolute;top:calc(12px + env(safe-area-inset-top));left:12px;z-index:20}
 .top-right{position:fixed;top:calc(12px + env(safe-area-inset-top));right:12px;z-index:60}
-.phase-intro #sound{display:none}
 /* ---------- Effekte ---------- */
 .fx{position:fixed;inset:0;pointer-events:none;z-index:30}
 .vignette{background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
 .grain{opacity:.09;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain .5s steps(4) infinite;inset:-50px}
 @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-20px,12px)}50%{transform:translate(14px,-18px)}75%{transform:translate(-8px,22px)}}
-@media (prefers-reduced-motion:reduce){.grain,#stageA{animation:none}.stage{transition:none}}
+@media (prefers-reduced-motion:reduce){.grain{animation:none}.stage{transition:none}}
 .proto{position:fixed;left:12px;bottom:4px;margin:0;font-size:10px;opacity:.45;z-index:31;pointer-events:none}
 .phase-innen .proto{display:none}
 /* ---------- Overlay ---------- */

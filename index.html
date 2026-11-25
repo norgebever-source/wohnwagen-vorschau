@@ -9,57 +9,29 @@
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="img/aussen.jpg?v=8">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="preload" as="image" href="img/innen.jpg?v=10">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
-<body class="phase-intro">
-
-<!-- Titelkarte -->
-<section id="intro" aria-label="Vorspann">
-  <div class="bars"></div>
-  <div class="card c1"><small>norge-bever.blog präsentiert</small></div>
-  <div class="card c2"><h1>Ein Bever-Film</h1><p class="tag">„Norwegen ist kein Ziel – es ist ein Gefühl.“</p></div>
-  <div class="card c3"><ol class="chapters">
-    <li><b>Kapitel 1</b> Am Fjord</li><li><b>Kapitel 2</b> Die Tür</li><li><b>Kapitel 3</b> Drinnen</li></ol></div>
-  <button id="skip" class="ghost">Vorspann überspringen ›</button>
-</section>
-
-<!-- Außen -->
-<section id="aussen" aria-label="Vor dem Wohnwagen">
-  <div class="viewport" id="vpA">
-    <div class="stage" id="stageA">
-      <img class="bg" src="img/aussen.jpg?v=8" alt="Wohnwagen am Fjord in der Abenddämmerung" draggable="false">
-      <div class="glow"></div>
-      <img class="tuer" id="tuer" src="img/tuer.png?v=8" alt="" draggable="false">
-      <button class="hs door-hs" id="doorBtn" aria-label="Tür öffnen und eintreten"><span class="dot"></span><span class="lbl">Tür öffnen</span></button>
-    </div>
-  </div>
-  <div class="caption">
-    <p class="kicker">Kapitel 1 · Am Fjord</p>
-    <h2>Norwegen mit Wohnwagen</h2>
-    <p>echte Tipps von echten Reisenden</p>
-    <button class="cta" id="enter">Eintreten ›</button>
-  </div>
-</section>
+<body class="phase-innen">
 
 <!-- Innen -->
 <section id="innen" aria-label="Im Wohnwagen">
   <div class="viewport scroller" id="vpI">
     <div class="stage" id="stageI">
-      <img class="bg" src="img/innen.jpg?v=8" alt="Gemütlicher Wohnwagen von innen" draggable="false">
+      <img class="bg" src="img/innen.jpg?v=10" alt="Gemütlicher Wohnwagen von innen" draggable="false">
       <div class="lamp"></div>
       <!-- Hotspots: Prozent der Bildfläche -->
-      <button class="hs" data-st="fenster"  style="left:2%;top:4%;width:14.5%;height:50%"><span class="dot"></span><span class="lbl">Fenster · Reisebilder</span></button>
-      <button class="hs" data-st="tv"       style="left:16.8%;top:30.5%;width:17%;height:30%"><span class="dot"></span><span class="lbl">Fernseher · Video</span></button>
-      <button class="hs fr" data-st="wir" data-photo="0" style="left:38%;top:16%;width:8.8%;height:18.5%"><span class="dot"></span><span class="lbl">Wohnwagen &amp; wir</span></button>
-      <button class="hs fr" data-st="rahmen"   style="left:47.8%;top:16%;width:8.8%;height:18.5%"><span class="dot"></span><span class="lbl">Galerien</span></button>
-      <button class="hs fr" data-st="wir" data-photo="1" style="left:57.4%;top:16%;width:8.6%;height:18.5%"><span class="dot"></span><span class="lbl">Wohnwagen &amp; wir</span></button>
-      <button class="hs" data-st="platte"   style="left:65%;top:30.5%;width:14.2%;height:20.5%"><span class="dot"></span><span class="lbl">Plattenspieler · Musik</span></button>
-      <button class="hs" data-st="radio"    style="left:79.3%;top:41%;width:7.6%;height:13.5%"><span class="dot"></span><span class="lbl">Radio · Live</span></button>
-      <button class="hs" data-st="schublade" style="left:65%;top:56%;width:15.5%;height:43%"><span class="dot"></span><span class="lbl">Schubladen</span></button>
-      <button class="hs" data-st="ordner"   style="left:88%;top:1%;width:12%;height:27%"><span class="dot"></span><span class="lbl">Ordner · Norwegen-Infos</span></button>
-      <button class="hs" data-st="karte"    style="left:89.5%;top:37%;width:10.5%;height:9.5%"><span class="dot"></span><span class="lbl">Karte · Route 2026</span></button>
-      <button class="hs" data-st="kompass"  style="left:90.5%;top:51%;width:8.5%;height:13%"><span class="dot"></span><span class="lbl">Kompass · Svingen-App</span></button>
+      <button class="hs" data-st="fenster"  style="left:1.5%;top:2%;width:15.1%;height:55%"><span class="dot"></span><span class="lbl">Fenster · Reisebilder</span></button>
+      <button class="hs" data-st="tv"       style="left:16.6%;top:31%;width:20.5%;height:29.5%"><span class="dot"></span><span class="lbl">Fernseher · Video</span></button>
+      <button class="hs fr" data-st="wir" data-photo="0" style="left:37.6%;top:14.8%;width:9.7%;height:19.6%"><span class="dot"></span><span class="lbl">Wohnwagen &amp; wir</span></button>
+      <button class="hs fr" data-st="rahmen"   style="left:47.9%;top:14.8%;width:9.7%;height:19.6%"><span class="dot"></span><span class="lbl">Galerien</span></button>
+      <button class="hs fr" data-st="wir" data-photo="1" style="left:58.2%;top:14.8%;width:9.7%;height:19.6%"><span class="dot"></span><span class="lbl">Wohnwagen &amp; wir</span></button>
+      <button class="hs" data-st="platte"   style="left:66%;top:40.5%;width:11%;height:10%"><span class="dot"></span><span class="lbl">Plattenspieler · Musik</span></button>
+      <button class="hs" data-st="radio"    style="left:77.2%;top:42.8%;width:10.2%;height:12%"><span class="dot"></span><span class="lbl">Radio · Live</span></button>
+      <button class="hs" data-st="schublade" style="left:67%;top:55%;width:17%;height:42%"><span class="dot"></span><span class="lbl">Schubladen</span></button>
+      <button class="hs" data-st="ordner"   style="left:87.5%;top:0%;width:12.5%;height:26%"><span class="dot"></span><span class="lbl">Ordner · Norwegen-Infos</span></button>
+      <button class="hs" data-st="karte"    style="left:87.5%;top:32.5%;width:12.5%;height:12%"><span class="dot"></span><span class="lbl">Karte · Route 2026</span></button>
+      <button class="hs" data-st="kompass"  style="left:87.8%;top:48%;width:12.2%;height:16%"><span class="dot"></span><span class="lbl">Kompass · Svingen-App</span></button>
       <!-- Kleine Bilder: Wohnwagen und wir -->
     </div>
   </div>
@@ -74,7 +46,6 @@
     <button data-st="kompass">🧭<span>Svingen</span></button>
     <button data-st="wir">👪<span>Wir</span></button>
   </nav>
-  <button id="out" class="ghost top-left" aria-label="Wieder nach draußen">‹ Nach draußen</button>
 </section>
 
 <!-- Overlay -->
@@ -95,6 +66,6 @@
 <p class="proto">Vorschau · Prototyp · Inhalte von norge-bever.blog</p>
 
 <script src="data.js?v=8"></script>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>
