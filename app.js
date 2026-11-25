@@ -7,7 +7,7 @@ let phase='aussen';
 function setPhase(p){body.classList.remove('phase-'+phase);phase=p;body.classList.add('phase-'+p)}
 
 /* ---------- Wischen: 1:1, rAF, Schwung; Tipp bleibt Tipp ---------- */
-const TAP=24, GAIN=2.2, FRICTION=.95, MIN_V=.08, MAX_V=3.5, REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TAP=24, NAV=120, NAV_V=.55, GAIN=2.2, FRICTION=.95, MIN_V=.08, MAX_V=3.5, REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const pans=[];
 let didDrag=false,navLock=0;
 function attachPan(vp,opts){
@@ -18,7 +18,7 @@ function attachPan(vp,opts){
   const apply=p=>opts.set(clamp(p));
   const onDown=e=>{if(!opts.active()||e.button)return;stopAnim();drag=true;moved=false;didDrag=false;blockClick=false;pid=e.pointerId;sx=lx=e.clientX;sy=ly=e.clientY;sp=opts.get();lt=performance.now();vx=0;samples=[{x:lx,t:lt}];if(!raf)raf=requestAnimationFrame(function tick(){if(!drag){raf=0;return}if(moved)apply(sp+(lx-sx));raf=requestAnimationFrame(tick)})};
   const onMove=e=>{if(!drag||e.pointerId!==pid)return;const now=performance.now(),x=e.clientX,y=e.clientY;if(Math.hypot(x-sx,y-sy)>TAP){moved=true;didDrag=true}samples.push({x,t:now});while(samples.length>24||(samples[0]&&now-samples[0].t>180))samples.shift();lx=x;ly=y;lt=now};
-  const onEnd=e=>{if(!drag||(e.pointerId!=null&&e.pointerId!==pid))return;drag=false;pid=null;if(raf){cancelAnimationFrame(raf);raf=0}if(moved){apply(sp+(lx-sx));blockClick=true;setTimeout(()=>blockClick=false,350)}else{didDrag=false}if(!moved||REDUCE)return;const now=performance.now();if(now-lt>80)return;const last=samples[samples.length-1]||{x:lx,t:lt};let old=samples[0]||last;for(const s of samples){if(last.t-s.t<=100){old=s;break}}const dt=Math.max(16,last.t-old.t);let v=(last.x-old.x)/dt*GAIN;if(opts.aim){const aim=opts.aim(v,opts.get());if(aim!=null){const need=aim-opts.get(),coast=v*16/(1-FRICTION);if(need!==0&&Math.sign(need)===Math.sign(v)&&Math.abs(coast)<Math.abs(need))v=need*(1-FRICTION)/16}}if(Math.abs(v)<MIN_V)return;vx=Math.max(-MAX_V,Math.min(MAX_V,v));let prev=now;inert=requestAnimationFrame(function tick(ts){const d=Math.min(32,ts-prev);prev=ts;const b=opts.bounds(),n=opts.get()+vx*d;vx*=Math.pow(FRICTION,d/16);if(n<=b.min||n>=b.max){apply(n<=b.min?b.min:b.max);vx=0;inert=0;return}opts.set(n);if(Math.abs(vx)<.02){vx=0;inert=0;return}inert=requestAnimationFrame(tick)})};
+  const onEnd=e=>{if(!drag||(e.pointerId!=null&&e.pointerId!==pid))return;drag=false;pid=null;if(raf){cancelAnimationFrame(raf);raf=0}if(moved){apply(sp+(lx-sx));blockClick=true;setTimeout(()=>blockClick=false,350)}else{didDrag=false}if(!moved)return;const now=performance.now();if(now-lt>80)return;const last=samples[samples.length-1]||{x:lx,t:lt};let old=samples[0]||last;for(const s of samples){if(last.t-s.t<=100){old=s;break}}const dt=Math.max(16,last.t-old.t);let v=(last.x-old.x)/dt*GAIN;const dx=lx-sx,dy=ly-sy;if(opts.swipe){const b=opts.bounds(),canPan=b.max-b.min>4;const atEdge=canPan&&((dx>0&&opts.get()>=b.max-2)||(dx<0&&opts.get()<=b.min+2));const firm=Math.abs(dx)>=NAV&&Math.abs(dx)>Math.abs(dy)*1.15;if(dx&&Math.sign(v)===Math.sign(dx)&&((firm&&Math.abs(v)>=NAV_V)||(atEdge&&Math.abs(dx)>=70&&Math.abs(v)>=.4))){if(opts.swipe(dx>0?'left':'right'))return}}if(REDUCE)return;if(opts.aim){const aim=opts.aim(v,opts.get());if(aim!=null){const need=aim-opts.get(),coast=v*16/(1-FRICTION);if(need!==0&&Math.sign(need)===Math.sign(v)&&Math.abs(coast)<Math.abs(need))v=need*(1-FRICTION)/16}}if(Math.abs(v)<MIN_V)return;vx=Math.max(-MAX_V,Math.min(MAX_V,v));let prev=now;inert=requestAnimationFrame(function tick(ts){const d=Math.min(32,ts-prev);prev=ts;const b=opts.bounds(),n=opts.get()+vx*d;vx*=Math.pow(FRICTION,d/16);if(n<=b.min||n>=b.max){apply(n<=b.min?b.min:b.max);vx=0;inert=0;return}opts.set(n);if(Math.abs(vx)<.02){vx=0;inert=0;return}inert=requestAnimationFrame(tick)})};
   vp.addEventListener('pointerdown',onDown,{passive:true});
   addEventListener('pointermove',onMove,{passive:true});
   addEventListener('pointerup',onEnd,{passive:true});
@@ -38,7 +38,7 @@ function aussenBounds(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/
   return{min:-overflow-shift,max:overflow-shift,shift}}
 function fitAussen(){const b=aussenBounds();$('#stageA').style.setProperty('--shift',b.shift+'px');pan=Math.max(b.min,Math.min(b.max,pan));$('#stageA').style.setProperty('--pan',pan+'px')}
 function aussenSignPan(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);const shift=Math.min(0.182*Wd,Math.max(0,(Wd-vw)/2));return Math.max(aussenBounds().min,-0.13*Wd-shift)}
-const panA=attachPan($('#vpA'),{bounds:aussenBounds,get:()=>pan,set:p=>{$('#stageA').style.setProperty('--pan',(pan=p)+'px')},active:()=>phase==='aussen'&&!busy,aim:(v,p)=>v<0?aussenSignPan():null});
+const panA=attachPan($('#vpA'),{bounds:aussenBounds,get:()=>pan,set:p=>{$('#stageA').style.setProperty('--pan',(pan=p)+'px')},active:()=>phase==='aussen'&&!busy,aim:(v,p)=>v<0?aussenSignPan():null,swipe:dir=>{if(busy||phase!=='aussen'||performance.now()<navLock)return false;goView(dir==='left'?'fjord':'berge');return phase==='fjord'||phase==='berge'}});
 
 /* Fjord / Berge: vom Zentrum aus wischen */
 let panF=0,panB=0;
