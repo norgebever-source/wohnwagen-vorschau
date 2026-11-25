@@ -6,46 +6,74 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 let phase='aussen';
 function setPhase(p){body.classList.remove('phase-'+phase);phase=p;body.classList.add('phase-'+p)}
 
+/* ---------- Wischen: 1:1, rAF, Schwung ---------- */
+const TAP=8, GAIN=2, FRICTION=.95, MIN_V=.12, MAX_V=3.5, REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const pans=[];
+function attachPan(vp,opts){
+  if(!vp)return{stop(){},goto(){},clamp(){}};
+  let drag=false,moved=false,blockClick=false,pid=null,sx=0,sp=0,lx=0,lt=0,vx=0,samples=[],raf=0,inert=0,glide=0;
+  const stopAnim=()=>{if(raf)cancelAnimationFrame(raf);if(inert)cancelAnimationFrame(inert);if(glide)cancelAnimationFrame(glide);raf=inert=glide=0;vx=0};
+  const clamp=p=>{const b=opts.bounds();return Math.max(b.min,Math.min(b.max,p))};
+  const apply=p=>opts.set(clamp(p));
+  const onDown=e=>{if(!opts.active()||e.button)return;stopAnim();drag=true;moved=false;blockClick=false;pid=e.pointerId;sx=lx=e.clientX;sp=opts.get();lt=performance.now();vx=0;samples=[];if(!raf)raf=requestAnimationFrame(function tick(){if(!drag){raf=0;return}apply(sp+(lx-sx));raf=requestAnimationFrame(tick)})};
+  const onMove=e=>{if(!drag||e.pointerId!==pid)return;const now=performance.now(),x=e.clientX,dt=now-lt;if(Math.abs(x-sx)>TAP)moved=true;if(dt>0){samples.push({v:(x-lx)/dt,t:now});if(samples.length>8)samples.shift()}lx=x;lt=now};
+  const onEnd=e=>{if(!drag||(e.pointerId!=null&&e.pointerId!==pid))return;drag=false;pid=null;if(raf){cancelAnimationFrame(raf);raf=0}apply(sp+(lx-sx));if(moved){blockClick=true;setTimeout(()=>blockClick=false,300)}if(!moved||REDUCE)return;const now=performance.now(),rec=samples.filter(s=>now-s.t<120);if(!rec.length)return;let v=rec.reduce((a,s)=>a+s.v,0)/rec.length*GAIN;if(Math.abs(v)<MIN_V)return;vx=Math.max(-MAX_V,Math.min(MAX_V,v));let prev=performance.now();inert=requestAnimationFrame(function tick(ts){const dt=Math.min(32,ts-prev);prev=ts;const b=opts.bounds(),n=opts.get()+vx*dt;vx*=Math.pow(FRICTION,dt/16);if(n<=b.min||n>=b.max){apply(n<=b.min?b.min:b.max);vx=0;inert=0;return}opts.set(n);if(Math.abs(vx)<.02){vx=0;inert=0;return}inert=requestAnimationFrame(tick)})};
+  vp.addEventListener('pointerdown',onDown,{passive:true});
+  addEventListener('pointermove',onMove,{passive:true});
+  addEventListener('pointerup',onEnd,{passive:true});
+  addEventListener('pointercancel',onEnd,{passive:true});
+  vp.addEventListener('click',e=>{if(blockClick||moved){e.preventDefault();e.stopPropagation();blockClick=false;moved=false}},true);
+  const ctl={stop(){drag=false;pid=null;stopAnim()},clamp(){apply(opts.get())},goto(target,ms){stopAnim();const from=opts.get(),to=clamp(target),t0=performance.now();if(REDUCE||!ms){opts.set(to);return}glide=requestAnimationFrame(function tick(t){const k=Math.min(1,(t-t0)/ms),e=1-Math.pow(1-k,3);opts.set(from+(to-from)*e);if(k<1)glide=requestAnimationFrame(tick);else glide=0})}};
+  pans.push(ctl);return ctl}
+function stopPans(){pans.forEach(p=>p.stop())}
+
 /* ---------- Außen: Tür im Bild zentrieren ---------- */
 let pan=0;
-function fitAussen(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);
+function aussenBounds(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);
   const shift=Math.min(0.182*Wd,Math.max(0,(Wd-vw)/2));
-  $('#stageA').style.setProperty('--shift',shift+'px');
-  if(Wd<=vw)pan=0;
-  else{const minPan=-(Wd-vw)/2-shift;pan=Math.max(minPan,Math.min(0,pan))}
-  $('#stageA').style.setProperty('--pan',pan+'px')}
-addEventListener('resize',fitAussen);fitAussen();
+  if(Wd<=vw)return{min:0,max:0,shift:0};
+  return{min:-(Wd-vw)/2-shift,max:0,shift}}
+function fitAussen(){const b=aussenBounds();$('#stageA').style.setProperty('--shift',b.shift+'px');pan=Math.max(b.min,Math.min(b.max,pan));$('#stageA').style.setProperty('--pan',pan+'px')}
+const panA=attachPan($('#vpA'),{bounds:aussenBounds,get:()=>pan,set:p=>{$('#stageA').style.setProperty('--pan',(pan=p)+'px')},active:()=>phase==='aussen'&&!busy});
 
-/* Wischen auf der Außenansicht, damit die Schilder erreichbar bleiben */
-(()=>{const vp=$('#vpA');if(!vp)return;let sx=0,sp=0,moved=false,drag=false;
-  vp.addEventListener('pointerdown',e=>{if(phase!=='aussen')return;drag=true;moved=false;sx=e.clientX;sp=pan;try{vp.setPointerCapture(e.pointerId)}catch(err){}});
-  vp.addEventListener('pointermove',e=>{if(!drag||phase!=='aussen')return;const dx=e.clientX-sx;if(Math.abs(dx)>8)moved=true;if(moved){pan=sp+dx;fitAussen()}});
-  const end=e=>{if(!drag)return;drag=false;if(moved)e.preventDefault()};
-  vp.addEventListener('pointerup',end);vp.addEventListener('pointercancel',end);
-  vp.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false}},true)})();
+/* Fjord / Berge: vom Zentrum aus wischen */
+let panF=0,panB=0;
+function viewBounds(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);if(Wd<=vw)return{min:0,max:0};const r=(Wd-vw)/2;return{min:-r,max:r}}
+function fitViews(){const b=viewBounds();panF=Math.max(b.min,Math.min(b.max,panF));panB=Math.max(b.min,Math.min(b.max,panB));$('#stageF').style.setProperty('--pan',panF+'px');$('#stageB').style.setProperty('--pan',panB+'px')}
+attachPan($('#vpF'),{bounds:viewBounds,get:()=>panF,set:p=>{$('#stageF').style.setProperty('--pan',(panF=p)+'px')},active:()=>phase==='fjord'&&!busy});
+attachPan($('#vpB'),{bounds:viewBounds,get:()=>panB,set:p=>{$('#stageB').style.setProperty('--pan',(panB=p)+'px')},active:()=>phase==='berge'&&!busy});
+
+/* Innen */
+let panI=0;
+function innenBounds(){const st=$('#stageI'),vp=$('#vpI');const W=st.offsetWidth,vw=vp.clientWidth;if(W<=vw)return{min:0,max:0};return{min:-(W-vw),max:0}}
+function fitInnen(){const b=innenBounds();panI=Math.max(b.min,Math.min(b.max,panI));$('#stageI').style.setProperty('--pan',panI+'px')}
+const panInnen=attachPan($('#vpI'),{bounds:innenBounds,get:()=>panI,set:p=>{$('#stageI').style.setProperty('--pan',(panI=p)+'px')},active:()=>phase==='innen'&&!busy&&!ovOpen});
+
+addEventListener('resize',()=>{fitAussen();fitViews();fitInnen()});
+fitAussen();fitViews();
 
 /* ---------- Eintreten ---------- */
 let busy=false;
-function enter(){if(busy||phase!=='aussen')return;busy=true;pan=0;fitAussen();setPhase('door');sfx('door');
+function enter(){if(busy||phase!=='aussen')return;busy=true;stopPans();pan=0;fitAussen();setPhase('door');sfx('door');
   setTimeout(()=>$('#stageA').classList.add('dolly'),1250);
   setTimeout(()=>$('#flash').classList.add('on'),2350);
   setTimeout(()=>{setPhase('innen');$('#stageA').classList.remove('dolly');centerRoom();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),5000);
      setTimeout(()=>$('#flash').classList.remove('on'),80);busy=false},3250)}
 $('#enter').onclick=enter;$('#doorBtn').onclick=enter;
-$('#out').onclick=()=>{closeOv(true);pan=0;fitAussen();setPhase('aussen')};
-function goAussen(){if(busy)return;setPhase('aussen');fitAussen();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
-function goView(id){if(busy||phase!=='aussen')return;setPhase(id);body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
+$('#out').onclick=()=>{closeOv(true);stopPans();pan=0;fitAussen();setPhase('aussen')};
+function goAussen(){if(busy)return;stopPans();setPhase('aussen');fitAussen();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
+function goView(id){if(busy||phase!=='aussen')return;stopPans();if(id==='fjord'){panF=0;$('#stageF').style.setProperty('--pan','0px')}else{panB=0;$('#stageB').style.setProperty('--pan','0px')}setPhase(id);body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
 $('#toFjord').onclick=()=>goView('fjord');
 $('#toBerge').onclick=()=>goView('berge');
 $('#fromFjord').onclick=goAussen;
 $('#fromBerge').onclick=goAussen;
-function centerRoom(){const v=$('#vpI');v.scrollLeft=(v.scrollWidth-v.clientWidth)*0.5}
+function centerRoom(){const b=innenBounds();panI=(b.min+b.max)/2;$('#stageI').style.setProperty('--pan',panI+'px')}
 
 /* ---------- Kamera auf Station ---------- */
 const stage=$('#stageI');
 function openStation(id,el){if(busy)return;const hs=(el&&el.classList.contains('hs')&&stage.contains(el))?el:$(`.hs[data-st="${id}"]`,stage);if(!hs)return;busy=true;
-  const v=$('#vpI');const r=hs.getBoundingClientRect();
-  if(r.left<0||r.right>innerWidth){v.scrollTo({left:v.scrollLeft+r.left+r.width/2-innerWidth/2,behavior:'smooth'})}
+  const r=hs.getBoundingClientRect();
+  if(r.left<0||r.right>innerWidth){panInnen.goto(panI-(r.left+r.width/2-innerWidth/2),420)}
   setTimeout(()=>{const cx=(hs.offsetLeft+hs.offsetWidth/2)/stage.offsetWidth*100,cy=(hs.offsetTop+hs.offsetHeight/2)/stage.offsetHeight*100;
     stage.style.transformOrigin=cx+'% '+cy+'%';stage.classList.add('zoom');stage.style.transform='scale(2.3)';sfx('whoosh');
     setTimeout(()=>{showOv(id);busy=false;if(hs===el&&hs.dataset.photo!=null&&STATIONS[id].photos)openLb(STATIONS[id].photos,+hs.dataset.photo)},780)},r.left<0||r.right>innerWidth?420:0)}
