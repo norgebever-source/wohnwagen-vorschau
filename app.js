@@ -28,7 +28,7 @@ function attachPan(vp,opts){
   const ctl={stop(){drag=false;pid=null;stopAnim()},clamp(){apply(opts.get())},goto(target,ms){stopAnim();const from=opts.get(),to=clamp(target),t0=performance.now();if(REDUCE||!ms){opts.set(to);return}glide=requestAnimationFrame(function tick(t){const k=Math.min(1,(t-t0)/ms),e=1-Math.pow(1-k,3);opts.set(from+(to-from)*e);if(k<1)glide=requestAnimationFrame(tick);else glide=0})}};
   pans.push(ctl);return ctl}
 function stopPans(){pans.forEach(p=>p.stop())}
-function bindTap(el,fn){if(!el)return;let handled=0;el.addEventListener('pointerup',e=>{if(e.button||didDrag||performance.now()<navLock)return;handled=performance.now();fn(e)},{passive:true});el.addEventListener('click',e=>{if(didDrag||performance.now()<navLock||performance.now()-handled<500){e.preventDefault();e.stopPropagation();return}fn(e)})}
+function bindTap(el,fn){if(!el)return;let handled=0;el.addEventListener('pointerup',e=>{if(e.button>0||didDrag||performance.now()<navLock)return;handled=performance.now();fn(e)},{passive:true});el.addEventListener('click',e=>{if(didDrag||performance.now()<navLock||performance.now()-handled<500){e.preventDefault();e.stopPropagation();return}fn(e)})}
 
 /* ---------- Außen: Tür im Bild zentrieren ---------- */
 let pan=0;
@@ -65,7 +65,7 @@ function enter(){if(busy||phase!=='aussen'||photoOpen())return;busy=true;stopPan
      setTimeout(()=>$('#flash').classList.remove('on'),80);busy=false},3250)}
 $('#enter').onclick=enter;bindTap($('#doorBtn'),enter);
 $('#out').onclick=()=>{closeOv(true);stopPans();pan=0;fitAussen();setPhase('aussen')};
-function closePhoto(){if(!photoOpen()||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(typeof closeSpotPop==='function')closeSpotPop();if(typeof hideSpotHint==='function')hideSpotHint();body.classList.remove('photo-fjord','photo-berge')}
+function closePhoto(){if(!photoOpen()||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(typeof closeSpotPop==='function')closeSpotPop();body.classList.remove('photo-fjord','photo-berge')}
 function openPhoto(id){if(busy||phase!=='aussen'||photoOpen()||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(id==='fjord'){panF=0;$('#stageF').style.setProperty('--pan','0px')}else{panB=0;$('#stageB').style.setProperty('--pan','0px')}body.classList.add('photo-'+id)}
 bindTap($('#toFjord'),()=>openPhoto('fjord'));
 bindTap($('#toBerge'),()=>openPhoto('berge'));
@@ -83,7 +83,7 @@ function openStation(id,el){if(busy)return;const hs=(el&&el.classList.contains('
   setTimeout(()=>{const cx=(hs.offsetLeft+hs.offsetWidth/2)/stage.offsetWidth*100,cy=(hs.offsetTop+hs.offsetHeight/2)/stage.offsetHeight*100;
     stage.style.transformOrigin=cx+'% '+cy+'%';stage.classList.add('zoom');stage.style.transform='scale(2.3)';sfx('whoosh');
     setTimeout(()=>{showOv(id);busy=false;if(hs===el&&hs.dataset.photo!=null&&STATIONS[id].photos)openLb(STATIONS[id].photos,+hs.dataset.photo)},780)},r.left<0||r.right>innerWidth?420:0)}
-$$('[data-st]').forEach(b=>b.addEventListener('click',()=>openStation(b.dataset.st,b)));
+$$('[data-st]').forEach(b=>{bindTap(b,()=>openStation(b.dataset.st,b));b.addEventListener('click',()=>openStation(b.dataset.st,b))});
 
 /* ---------- Overlay ---------- */
 const ov=$('#ov'),ovT=$('#ovTitle'),ovB=$('#ovBody');let ovOpen=false;
@@ -265,22 +265,11 @@ function openSpotPop(key){
   spotPop.hidden=false;
 }
 function closeSpotPop(){if(spotPop)spotPop.hidden=true}
-const hoverOK=matchMedia('(hover: hover) and (pointer: fine)');
-const mouseDesktop=()=>hoverOK.matches||((navigator.maxTouchPoints||0)===0&&!('ontouchstart' in window));
-let hintEl=null;
-function hideSpotHint(){if(hintEl){hintEl.classList.remove('spot-hint');hintEl=null}}
 function bindSpot(el,go){
   if(!el)return;
   el.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')el.classList.add('spot-hover')});
   el.addEventListener('pointerleave',()=>el.classList.remove('spot-hover'));
-  bindTap(el,e=>{
-    const mouse=(e&&e.pointerType==='mouse')||mouseDesktop();
-    if(!mouse){
-      if(hintEl!==el){hideSpotHint();el.classList.add('spot-hint');hintEl=el;return}
-    }
-    hideSpotHint();
-    go();
-  });
+  bindTap(el,go);
 }
 bindSpot($('#spotAngel'),()=>openSpotPop('angel'));
 bindSpot($('#spotWindsack'),()=>openSpotPop('windsack'));
@@ -290,9 +279,5 @@ if(spotPop){
   if(sx)sx.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();closeSpotPop()});
   spotPop.addEventListener('pointerdown',e=>{if(e.target===spotPop)closeSpotPop()});
 }
-const fjordVp=$('#vpF');
-if(fjordVp) fjordVp.addEventListener('pointerdown',e=>{
-  if(hintEl && !e.target.closest('.spot')) hideSpotHint();
-},true);
 
 })();
