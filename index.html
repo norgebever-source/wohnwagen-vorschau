@@ -19,7 +19,7 @@ if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="img/aussen.jpg?v=11">
-<link rel="stylesheet" href="style.v20.css">
+<link rel="stylesheet" href="style.v21.css">
 </head>
 <body class="phase-aussen">
 
@@ -31,9 +31,9 @@ if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.
       <div class="glow"></div>
       <img class="tuer" id="tuer" src="img/tuer.png?v=11" alt="" draggable="false">
       <button class="hs door-hs" id="doorBtn" aria-label="Tür öffnen und eintreten"><span class="dot"></span><span class="lbl">Tür öffnen</span></button>
-      <img class="schild schild-main" src="img/schild-fjord-fjellet.png?v=12" alt="" draggable="false">
-      <button class="hs schild-hs" id="toFjord" style="left:54.4%;top:42.8%;width:17.2%;height:11.2%" aria-label="Til fjorden"><span class="dot"></span><span class="lbl">Til fjorden</span></button>
-      <button class="hs schild-hs" id="toBerge" style="left:56.6%;top:53.5%;width:15%;height:10.2%" aria-label="Til fjellet"><span class="dot"></span><span class="lbl">Til fjellet</span></button>
+      <img class="schild schild-main" src="img/schild-fjord-fjellet.png?v=21" alt="" draggable="false">
+      <button class="hs schild-hs" id="toFjord" style="left:34.85%;top:53.85%;width:9.05%;height:5.2%" aria-label="Til fjorden"><span class="dot"></span><span class="lbl">Til fjorden</span></button>
+      <button class="hs schild-hs" id="toBerge" style="left:35.7%;top:59.45%;width:8.1%;height:5.2%" aria-label="Til fjellet"><span class="dot"></span><span class="lbl">Til fjellet</span></button>
     </div>
   </div>
   <div class="hint" id="hintA">← wischen zum Umsehen →</div>
@@ -60,6 +60,7 @@ if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.
       <button class="spot" id="spotWindsack" style="left:55.52%;top:56.07%;width:5.41%;height:19.2%" aria-label="Wind &amp; Wetter"><span class="spot-lbl">Wind &amp; Wetter</span></button>
     </div>
   </div>
+  <button type="button" class="photo-x" id="closeFjord" aria-label="Foto schließen">✕</button>
   <div id="spotPop" hidden>
     <div class="spot-card">
       <button type="button" class="spot-x" aria-label="Schließen">✕</button>
@@ -77,6 +78,7 @@ if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.
       <button class="hs schild-hs" id="fromBerge" style="left:47.8%;top:42.5%;width:17.2%;height:10.3%" aria-label="Til campingvogna"><span class="dot"></span><span class="lbl">Til campingvogna</span></button>
     </div>
   </div>
+  <button type="button" class="photo-x" id="closeBerge" aria-label="Foto schließen">✕</button>
 </section>
 
 <!-- Innen -->
@@ -132,6 +134,6 @@ if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.
 <p class="proto">Vorschau · Prototyp · Inhalte von norge-bever.blog</p>
 
 <script src="data.js?v=8"></script>
-<script src="app.v20.js"></script>
+<script src="app.v21.js"></script>
 </body>
 </html>

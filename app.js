@@ -5,6 +5,7 @@ const W=(u,w)=>u+'?w='+w;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let phase='aussen';
 function setPhase(p){body.classList.remove('phase-'+phase);phase=p;body.classList.add('phase-'+p)}
+function photoOpen(){return body.classList.contains('photo-fjord')||body.classList.contains('photo-berge')}
 
 /* ---------- Wischen: 1:1, rAF, Schwung; Tipp bleibt Tipp ---------- */
 const TAP=24, GAIN=2.2, FRICTION=.95, MIN_V=.08, MAX_V=3.5, REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -37,15 +38,14 @@ function aussenBounds(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/
   if(Wd<=vw)return{min:0,max:0,shift:0};
   return{min:-overflow-shift,max:overflow-shift,shift}}
 function fitAussen(){const b=aussenBounds();$('#stageA').style.setProperty('--shift',b.shift+'px');pan=Math.max(b.min,Math.min(b.max,pan));$('#stageA').style.setProperty('--pan',pan+'px')}
-function aussenSignPan(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);const shift=Math.min(0.182*Wd,Math.max(0,(Wd-vw)/2));return Math.max(aussenBounds().min,-0.13*Wd-shift)}
-const panA=attachPan($('#vpA'),{bounds:aussenBounds,get:()=>pan,set:p=>{$('#stageA').style.setProperty('--pan',(pan=p)+'px')},active:()=>phase==='aussen'&&!busy,aim:(v,p)=>v<0?aussenSignPan():null});
+const panA=attachPan($('#vpA'),{bounds:aussenBounds,get:()=>pan,set:p=>{$('#stageA').style.setProperty('--pan',(pan=p)+'px')},active:()=>phase==='aussen'&&!busy&&!photoOpen()});
 
 /* Fjord / Berge: vom Zentrum aus wischen */
 let panF=0,panB=0;
 function viewBounds(){const vw=innerWidth,vh=innerHeight,Wd=Math.max(vw,vh*16/9);if(Wd<=vw)return{min:0,max:0};const r=(Wd-vw)/2;return{min:-r,max:r}}
 function fitViews(){const b=viewBounds();panF=Math.max(b.min,Math.min(b.max,panF));panB=Math.max(b.min,Math.min(b.max,panB));$('#stageF').style.setProperty('--pan',panF+'px');$('#stageB').style.setProperty('--pan',panB+'px')}
-attachPan($('#vpF'),{bounds:viewBounds,get:()=>panF,set:p=>{$('#stageF').style.setProperty('--pan',(panF=p)+'px')},active:()=>phase==='fjord'&&!busy});
-attachPan($('#vpB'),{bounds:viewBounds,get:()=>panB,set:p=>{$('#stageB').style.setProperty('--pan',(panB=p)+'px')},active:()=>phase==='berge'&&!busy});
+attachPan($('#vpF'),{bounds:viewBounds,get:()=>panF,set:p=>{$('#stageF').style.setProperty('--pan',(panF=p)+'px')},active:()=>body.classList.contains('photo-fjord')&&!busy});
+attachPan($('#vpB'),{bounds:viewBounds,get:()=>panB,set:p=>{$('#stageB').style.setProperty('--pan',(panB=p)+'px')},active:()=>body.classList.contains('photo-berge')&&!busy});
 
 /* Innen */
 let panI=0;
@@ -58,19 +58,21 @@ fitAussen();fitViews();
 
 /* ---------- Eintreten ---------- */
 let busy=false;
-function enter(){if(busy||phase!=='aussen')return;busy=true;stopPans();pan=0;fitAussen();setPhase('door');sfx('door');
+function enter(){if(busy||phase!=='aussen'||photoOpen())return;busy=true;stopPans();pan=0;fitAussen();setPhase('door');sfx('door');
   setTimeout(()=>$('#stageA').classList.add('dolly'),1250);
   setTimeout(()=>$('#flash').classList.add('on'),2350);
   setTimeout(()=>{setPhase('innen');$('#stageA').classList.remove('dolly');centerRoom();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),5000);
      setTimeout(()=>$('#flash').classList.remove('on'),80);busy=false},3250)}
 $('#enter').onclick=enter;bindTap($('#doorBtn'),enter);
 $('#out').onclick=()=>{closeOv(true);stopPans();pan=0;fitAussen();setPhase('aussen')};
-function goAussen(){if(busy||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();setPhase('aussen');fitAussen();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
-function goView(id){if(busy||phase!=='aussen'||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(id==='fjord'){panF=0;$('#stageF').style.setProperty('--pan','0px')}else{panB=0;$('#stageB').style.setProperty('--pan','0px')}setPhase(id);body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),4000)}
-bindTap($('#toFjord'),()=>goView('fjord'));
-bindTap($('#toBerge'),()=>goView('berge'));
-bindTap($('#fromFjord'),goAussen);
-bindTap($('#fromBerge'),goAussen);
+function closePhoto(){if(!photoOpen()||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(typeof closeSpotPop==='function')closeSpotPop();if(typeof hideSpotHint==='function')hideSpotHint();body.classList.remove('photo-fjord','photo-berge')}
+function openPhoto(id){if(busy||phase!=='aussen'||photoOpen()||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(id==='fjord'){panF=0;$('#stageF').style.setProperty('--pan','0px')}else{panB=0;$('#stageB').style.setProperty('--pan','0px')}body.classList.add('photo-'+id)}
+bindTap($('#toFjord'),()=>openPhoto('fjord'));
+bindTap($('#toBerge'),()=>openPhoto('berge'));
+bindTap($('#fromFjord'),closePhoto);
+bindTap($('#fromBerge'),closePhoto);
+bindTap($('#closeFjord'),closePhoto);
+bindTap($('#closeBerge'),closePhoto);
 function centerRoom(){const b=innenBounds();panI=(b.min+b.max)/2;$('#stageI').style.setProperty('--pan',panI+'px')}
 
 /* ---------- Kamera auf Station ---------- */
