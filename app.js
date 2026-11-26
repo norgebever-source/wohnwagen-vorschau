@@ -63,7 +63,7 @@ function enter(){if(busy||phase!=='aussen'||photoOpen())return;busy=true;stopPan
   setTimeout(()=>$('#flash').classList.add('on'),2350);
   setTimeout(()=>{setPhase('innen');$('#stageA').classList.remove('dolly');centerRoom();body.classList.add('labels-on');setTimeout(()=>body.classList.remove('labels-on'),5000);
      setTimeout(()=>$('#flash').classList.remove('on'),80);busy=false},3250)}
-$('#enter').onclick=enter;bindTap($('#doorBtn'),enter);
+bindTap($('#doorBtn'),enter);
 $('#out').onclick=()=>{closeOv(true);stopPans();pan=0;fitAussen();setPhase('aussen')};
 function closePhoto(){if(!photoOpen()||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(typeof closeSpotPop==='function')closeSpotPop();body.classList.remove('photo-fjord','photo-berge')}
 function openPhoto(id){if(busy||phase!=='aussen'||photoOpen()||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(id==='fjord'){panF=0;const b=viewBounds(),st=$('#stageF'),fish=$('#spotFish'),mast=$('#spotWindsack');const Wd=st.offsetWidth||Math.max(innerWidth,innerHeight*16/9),vis=innerWidth/Wd,pad=0.012;const fL=fish.offsetLeft/Wd-pad,fR=(fish.offsetLeft+fish.offsetWidth)/Wd+pad,mL=mast?mast.offsetLeft/Wd-pad:fL;const visL0=Math.max(0,(Wd-innerWidth)/2)/Wd,visR0=visL0+vis;if(fR>visR0||fL<visL0){let start=Math.min(mL,Math.max(0,fR-vis));start=Math.max(0,Math.min(Math.max(0,1-vis),start));panF=Math.max(b.min,Math.min(b.max,-(start-visL0)*Wd))}$('#stageF').style.setProperty('--pan',panF+'px')}else{panB=0;$('#stageB').style.setProperty('--pan','0px')}body.classList.add('photo-'+id)}
