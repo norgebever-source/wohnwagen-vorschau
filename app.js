@@ -66,7 +66,7 @@ function enter(){if(busy||phase!=='aussen'||photoOpen())return;busy=true;stopPan
 $('#enter').onclick=enter;bindTap($('#doorBtn'),enter);
 $('#out').onclick=()=>{closeOv(true);stopPans();pan=0;fitAussen();setPhase('aussen')};
 function closePhoto(){if(!photoOpen()||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(typeof closeSpotPop==='function')closeSpotPop();body.classList.remove('photo-fjord','photo-berge')}
-function openPhoto(id){if(busy||phase!=='aussen'||photoOpen()||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(id==='fjord'){panF=0;$('#stageF').style.setProperty('--pan','0px')}else{panB=0;$('#stageB').style.setProperty('--pan','0px')}body.classList.add('photo-'+id)}
+function openPhoto(id){if(busy||phase!=='aussen'||photoOpen()||performance.now()<navLock)return;navLock=performance.now()+500;stopPans();if(id==='fjord'){panF=0;const b=viewBounds(),st=$('#stageF'),fish=$('#spotFish'),mast=$('#spotWindsack');const Wd=st.offsetWidth||Math.max(innerWidth,innerHeight*16/9),vis=innerWidth/Wd,pad=0.012;const fL=fish.offsetLeft/Wd-pad,fR=(fish.offsetLeft+fish.offsetWidth)/Wd+pad,mL=mast?mast.offsetLeft/Wd-pad:fL;const visL0=Math.max(0,(Wd-innerWidth)/2)/Wd,visR0=visL0+vis;if(fR>visR0||fL<visL0){let start=Math.min(mL,Math.max(0,fR-vis));start=Math.max(0,Math.min(Math.max(0,1-vis),start));panF=Math.max(b.min,Math.min(b.max,-(start-visL0)*Wd))}$('#stageF').style.setProperty('--pan',panF+'px')}else{panB=0;$('#stageB').style.setProperty('--pan','0px')}body.classList.add('photo-'+id)}
 bindTap($('#toFjord'),()=>openPhoto('fjord'));
 bindTap($('#toBerge'),()=>openPhoto('berge'));
 bindTap($('#fromFjord'),closePhoto);
