@@ -67,7 +67,7 @@ section{position:fixed;inset:0;opacity:0;visibility:hidden;pointer-events:none;t
 .vignette{background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
 .grain{opacity:.09;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain .5s steps(4) infinite;inset:-50px}
 @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-20px,12px)}50%{transform:translate(14px,-18px)}75%{transform:translate(-8px,22px)}}
-@media (prefers-reduced-motion:reduce){.grain,#stageA,.stage-view{animation:none}.stage{transition:none}}
+@media (prefers-reduced-motion:reduce){.grain,#stageA,.stage-view,.schild,.spot-img,.cta{animation:none}.stage{transition:none}}
 .proto{position:fixed;left:12px;bottom:4px;margin:0;font-size:10px;opacity:.45;z-index:31;pointer-events:none}
 .phase-innen .proto{display:none}
 /* ---------- Overlay ---------- */
@@ -199,8 +199,8 @@ section{position:fixed;inset:0;opacity:0;visibility:hidden;pointer-events:none;t
 /* ---------- Angelsteg: Angel, Windsack, Fisch ---------- */
 .spot-img{position:absolute;height:auto;pointer-events:none;user-select:none;-webkit-user-select:none;filter:drop-shadow(-2px 3px 3px rgba(0,0,0,.4))}
 .spot-angel{left:48.18%;top:50.19%;width:4.7%}
-.spot-windsack{left:55.52%;top:56.07%;width:5.41%}
-.spot-fish{left:54.57%;top:51.36%;width:7.6%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.28))}
+.spot-windsack{left:55.52%;top:22.09%;width:5.41%}
+.spot-fish{left:55.9%;top:63.2%;width:6.7%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.28))}
 .spot{position:absolute;background:transparent;border:0;padding:0;z-index:3;outline:none}
 .spot-lbl{position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);white-space:nowrap;font-size:13px;font-weight:600;background:rgba(12,10,8,.78);border:1px solid rgba(255,214,150,.35);padding:5px 10px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .22s;color:var(--ink)}
 #spotFish .spot-lbl{top:auto;bottom:calc(100% + 6px)}
@@ -218,3 +218,20 @@ section{position:fixed;inset:0;opacity:0;visibility:hidden;pointer-events:none;t
 #fjord,#berge{z-index:60;background:#07080a;transition:opacity .22s ease,visibility 0s linear .22s}
 body.photo-fjord #fjord,body.photo-berge #berge{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .22s ease,visibility 0s}
 .photo-x{position:absolute;top:calc(12px + env(safe-area-inset-top));left:12px;z-index:72;width:42px;height:42px;border:0;border-radius:999px;background:rgba(10,12,16,.55);border:1px solid rgba(246,238,221,.25);color:var(--ink);font-size:22px;line-height:1;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+
+/* ---------- Sanftes Pulsieren an tippbaren Stellen ---------- */
+@keyframes softglow-schild{
+  0%,100%{filter:drop-shadow(0 0 2px rgba(255,214,150,.2))}
+  50%{filter:drop-shadow(0 0 8px rgba(255,214,150,.7))}
+}
+@keyframes softglow-spot{
+  0%,100%{filter:drop-shadow(-2px 3px 3px rgba(0,0,0,.4)) drop-shadow(0 0 2px rgba(255,214,150,.25))}
+  50%{filter:drop-shadow(-2px 3px 3px rgba(0,0,0,.4)) drop-shadow(0 0 8px rgba(255,214,150,.75))}
+}
+@keyframes softglow-cta{
+  0%,100%{box-shadow:0 6px 30px rgba(242,179,90,.4)}
+  50%{box-shadow:0 6px 30px rgba(242,179,90,.4),0 0 16px rgba(242,179,90,.7)}
+}
+.schild{animation:softglow-schild 2.8s ease-in-out infinite}
+.spot-img{animation:softglow-spot 2.8s ease-in-out infinite}
+.cta{animation:softglow-cta 2.8s ease-in-out infinite}
