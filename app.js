@@ -250,4 +250,47 @@ function sfx(type){if(!amb.on||!ac)return;const c=ac,t=c.currentTime,s=noise(c),
   f.type='bandpass';f.frequency.setValueAtTime(type==='door'?300:type==='drawer'?900:1400,t);f.frequency.exponentialRampToValueAtTime(type==='door'?120:400,t+.6);
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(type==='whoosh'?.25:.5,t+.05);g.gain.exponentialRampToValueAtTime(.001,t+(type==='door'?1.2:.5));
   s.connect(f);f.connect(g);g.connect(c.destination);s.start(t);s.stop(t+1.3)}
+
+/* ---------- Angelsteg: Angel, Windsack, Fisch ---------- */
+const spotPop=$('#spotPop'), spotLinks=$('#spotLinks');
+const SPOTS={
+  angel:[['🐟 Fishbuddy','https://fishbuddy.app/'],['🌍 Fishbrain','https://www.fishbrain.com'],['🗺️ iFiske','https://www.ifiske.se']],
+  windsack:[['Windy','https://www.windy.com'],['Windfinder','https://www.windfinder.com']]
+};
+function openSpotPop(key){
+  if(!spotPop||!spotLinks||!SPOTS[key])return;
+  spotLinks.innerHTML=SPOTS[key].map(([l,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${l}</a>`).join('');
+  spotPop.hidden=false;
+}
+function closeSpotPop(){if(spotPop)spotPop.hidden=true}
+const hoverOK=matchMedia('(hover: hover) and (pointer: fine)');
+const mouseDesktop=()=>hoverOK.matches||((navigator.maxTouchPoints||0)===0&&!('ontouchstart' in window));
+let hintEl=null;
+function hideSpotHint(){if(hintEl){hintEl.classList.remove('spot-hint');hintEl=null}}
+function bindSpot(el,go){
+  if(!el)return;
+  el.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')el.classList.add('spot-hover')});
+  el.addEventListener('pointerleave',()=>el.classList.remove('spot-hover'));
+  bindTap(el,e=>{
+    const mouse=(e&&e.pointerType==='mouse')||mouseDesktop();
+    if(!mouse){
+      if(hintEl!==el){hideSpotHint();el.classList.add('spot-hint');hintEl=el;return}
+    }
+    hideSpotHint();
+    go();
+  });
+}
+bindSpot($('#spotAngel'),()=>openSpotPop('angel'));
+bindSpot($('#spotWindsack'),()=>openSpotPop('windsack'));
+bindSpot($('#spotFish'),()=>{window.open('https://www.norgeskart.no/','_blank','noopener,noreferrer')});
+if(spotPop){
+  const sx=$('.spot-x',spotPop);
+  if(sx)sx.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();closeSpotPop()});
+  spotPop.addEventListener('pointerdown',e=>{if(e.target===spotPop)closeSpotPop()});
+}
+const fjordVp=$('#vpF');
+if(fjordVp) fjordVp.addEventListener('pointerdown',e=>{
+  if(hintEl && !e.target.closest('.spot')) hideSpotHint();
+},true);
+
 })();

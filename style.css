@@ -195,3 +195,21 @@ section{position:fixed;inset:0;opacity:0;visibility:hidden;pointer-events:none;t
 @media (max-width:560px){.wirprints button{padding-bottom:7px}}
 
 .hs.fr .dot{top:auto;bottom:-2px}.hs.fr .lbl{top:auto;bottom:-34px}
+
+/* ---------- Angelsteg: Angel, Windsack, Fisch ---------- */
+.spot-img{position:absolute;height:auto;pointer-events:none;user-select:none;-webkit-user-select:none;filter:drop-shadow(-2px 3px 3px rgba(0,0,0,.4))}
+.spot-angel{left:48.18%;top:50.19%;width:4.7%}
+.spot-windsack{left:55.52%;top:56.07%;width:5.41%}
+.spot-fish{left:54.57%;top:51.36%;width:7.6%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.28))}
+.spot{position:absolute;background:transparent;border:0;padding:0;z-index:3;outline:none}
+.spot-lbl{position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);white-space:nowrap;font-size:13px;font-weight:600;background:rgba(12,10,8,.78);border:1px solid rgba(255,214,150,.35);padding:5px 10px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .22s;color:var(--ink)}
+#spotFish .spot-lbl{top:auto;bottom:calc(100% + 6px)}
+@media (hover:hover) and (pointer:fine){.spot:hover .spot-lbl,.spot:focus-visible .spot-lbl{opacity:1}}
+.spot.spot-hint .spot-lbl,.spot.spot-hover .spot-lbl{opacity:1}
+@media (hover:none){.spot-lbl{font-size:11px;padding:3px 8px}}
+#spotPop{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:rgba(6,6,8,.4);padding:20px}
+#spotPop .spot-card{position:relative;min-width:min(260px,86vw);max-width:min(360px,92vw);background:linear-gradient(180deg,#24180f,#170f09);border:1px solid rgba(242,179,90,.28);border-radius:16px;padding:28px 18px 16px;box-shadow:0 20px 50px rgba(0,0,0,.55)}
+#spotPop .spot-x{position:absolute;top:8px;right:10px;width:32px;height:32px;border:0;border-radius:999px;background:rgba(255,214,150,.12);color:var(--ink);font-size:18px;line-height:1}
+#spotPop .spot-links{display:flex;flex-direction:column;gap:8px}
+#spotPop .spot-links a{display:block;background:rgba(255,214,150,.1);border:1px solid rgba(255,214,150,.2);border-radius:12px;padding:12px 14px;color:var(--ink);text-decoration:none;font-weight:600;text-align:center}
+#spotPop .spot-links a:hover{background:rgba(255,214,150,.2)}
