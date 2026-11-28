@@ -18,8 +18,8 @@ if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="img/aussen-wilk.jpg?v=39">
-<link rel="stylesheet" href="style.v39.css">
+<link rel="preload" as="image" href="img/aussen-wilk.jpg?v=40">
+<link rel="stylesheet" href="style.v40.css">
 </head>
 <body class="phase-aussen">
 
@@ -27,7 +27,7 @@ if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.
 <section id="aussen" aria-label="Vor dem Wohnwagen">
   <div class="viewport" id="vpA">
     <div class="stage" id="stageA">
-      <img class="bg" src="img/aussen-wilk.jpg?v=39" alt="Wilk-Wohnwagen auf der Wiese bei Rakssetra über Loen" draggable="false">
+      <img class="bg" src="img/aussen-wilk.jpg?v=40" alt="Wilk-Wohnwagen auf der Wiese bei Rakssetra über Loen" draggable="false">
       <img class="wilk-badge" src="img/logo-rund-256.png?v=32" alt="" aria-hidden="true" draggable="false">
       <button class="hs door-hs" id="doorBtn" aria-label="Tür öffnen und eintreten"><span class="dot"></span><span class="lbl">Tür öffnen</span></button>
     </div>
@@ -41,15 +41,16 @@ if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.
 <section id="innen" aria-label="Im Wohnwagen">
   <div class="viewport scroller" id="vpI">
     <div class="stage" id="stageI">
-      <img class="bg" src="img/innen.jpg?v=39" alt="Gemütlicher Wohnwagen von innen" draggable="false">
+      <img class="bg" src="img/innen.jpg?v=40" alt="Gemütlicher Wohnwagen von innen" draggable="false">
       <div class="lamp"></div>
+      <span class="cam-led" aria-hidden="true"></span>
       <!-- Hotspots: Prozent der Bildfläche -->
       <button class="hs" data-st="fenster"  style="left:1.5%;top:2%;width:15.1%;height:55%"><span class="dot"></span><span class="lbl">Fenster · Reisebilder</span></button>
       <button class="hs" data-st="tv"       style="left:16.6%;top:31%;width:20.5%;height:29.5%"><span class="dot"></span><span class="lbl">Fernseher · Video</span></button>
-      <button class="hs fr" data-st="wir" data-photo="0" data-tech="1" style="left:37.6%;top:14.8%;width:9.7%;height:19.6%"><span class="dot"></span><span class="lbl">Wohnwagen &amp; wir</span></button>
+      <button class="hs fr" data-st="wir" data-photo="0" data-tech="1" style="left:37.6%;top:14.8%;width:9.7%;height:19.6%"><span class="dot"></span><span class="lbl">Wilke und Olav</span></button>
       <button class="hs fr" data-st="rahmen"   style="left:47.9%;top:14.8%;width:9.7%;height:19.6%"><span class="dot"></span><span class="lbl">Galerien</span></button>
       <button class="hs fr" data-st="wir" style="left:58.2%;top:14.8%;width:9.7%;height:19.6%"><span class="dot"></span><span class="lbl">Wohnwagen &amp; wir</span></button>
-      <button class="hs" data-st="platte" data-ext="https://open.spotify.com/track/5ND2lS3kLnksKCyFLLAk8p" style="left:66%;top:40.5%;width:11%;height:10%"><span class="dot"></span><span class="lbl">Spotify · Kaltzorn</span></button>
+      <button class="hs" data-st="platte" data-ext="https://open.spotify.com/track/7yH4cLuJ7OjhwKem4bapgk" style="left:66%;top:40.5%;width:11%;height:10%"><span class="dot"></span><span class="lbl">Spotify · Kaltzorn</span></button>
       <button class="hs" data-st="webcam" data-ext="https://www.twitch.tv/maxbiber" style="left:77.2%;top:42.8%;width:10.2%;height:12%"><span class="dot"></span><span class="lbl">Webcam · Twitch</span></button>
       <button class="hs" data-st="schublade" style="left:67%;top:55%;width:17%;height:42%"><span class="dot"></span><span class="lbl">Schubladen</span></button>
       <button class="hs" data-st="ordner"   style="left:87.5%;top:0%;width:12.5%;height:26%"><span class="dot"></span><span class="lbl">Ordner · Norwegen-Infos</span></button>
@@ -63,7 +64,7 @@ if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.
     <button data-st="fenster">🪟<span>Fenster</span></button>
     <button data-st="tv">📺<span>TV</span></button>
     <button data-st="rahmen">🖼️<span>Galerien</span></button>
-    <button data-st="platte" data-ext="https://open.spotify.com/track/5ND2lS3kLnksKCyFLLAk8p">🎵<span>Musik</span></button>
+    <button data-st="platte" data-ext="https://open.spotify.com/track/7yH4cLuJ7OjhwKem4bapgk">🎵<span>Musik</span></button>
     <button data-st="schublade">🗄️<span>Schubladen</span></button>
     <button data-st="ordner">📁<span>Infos</span></button>
     <button data-st="kompass">🧭<span>Svingen</span></button>
@@ -90,6 +91,6 @@ if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.
 <p class="proto">Vorschau · Prototyp · Inhalte von norge-bever.blog</p>
 
 <script src="data.js?v=8"></script>
-<script src="app.v39.js"></script>
+<script src="app.v40.js"></script>
 </body>
 </html>
